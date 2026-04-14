@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
+import apiReducer from '@/redux/apiSlide'
 export const store = configureStore({
   reducer: {
-
+api:apiReducer
   }
 })
 

@@ -3,8 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
-
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { FetchAPI } from "@/fetch/fetchApi";
 export default function SignupPage() {
+  const api= useAppSelector(state=>state.api)
+  const dispatch = useAppDispatch()
   const [step, setStep] = useState(1);
 
   const [form, setForm] = useState({
@@ -26,14 +29,30 @@ export default function SignupPage() {
   };
 
   // STEP 1 → send code (fake validation)
-  const nextStep1 = () => {
+  const nextStep1 = async () => {
     if (!form.username || !form.fullname || !form.email) {
       setError("Please fill all fields");
       return;
     }
-
-    setError("");
+    try {
+      await dispatch(FetchAPI({
+      endpoint:"/api/auth/checkuser",
+      method:'POST',
+      body:{
+        username:form.password,
+      name:form.fullname,
+      email:form.email
+      }
+    })).unwrap()
+   if(api.error){
+    setError(api.error)
+   }
     setStep(2);
+      
+    } catch (error) {
+      const err = error as string
+      setError(err)
+    }
   };
 
   // STEP 2 → verify code (fake check)
@@ -69,20 +88,13 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-100 via-white to-purple-100 px-4 py-10">
 
       <div className="w-full max-w-md">
-
-        {/* CARD */}
         <div className="bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-5 sm:p-8">
-
-          {/* TITLE */}
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800">
             Create Account
           </h1>
-
           <p className="text-center text-gray-500 text-xs sm:text-sm mt-1">
             Step {step} of 3
           </p>
-
-          {/* PROGRESS */}
           <div className="w-full bg-gray-200 h-2 rounded-full mt-5 overflow-hidden">
             <div
               className="h-2 bg-blue-600 transition-all duration-500"
@@ -92,22 +104,16 @@ export default function SignupPage() {
               }}
             />
           </div>
-
-          {/* ERROR */}
           {error && (
             <div className="mt-4 bg-red-100 text-red-600 text-xs sm:text-sm px-4 py-2 rounded-lg">
               {error}
             </div>
           )}
-
-          {/* SUCCESS */}
           {success && (
             <div className="mt-4 bg-green-100 text-green-700 text-xs sm:text-sm px-4 py-2 rounded-lg">
               {success}
             </div>
           )}
-
-          {/* FORM */}
           <div className="mt-6 space-y-4">
 
             {/* STEP 1 */}
@@ -140,7 +146,7 @@ export default function SignupPage() {
                   onClick={nextStep1}
                   className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold transition"
                 >
-                  Send Verification Code
+                  {api.loading?'pending...':'Send Verification Code'}
                 </button>
               </div>
             )}
@@ -212,8 +218,6 @@ export default function SignupPage() {
             )}
 
           </div>
-
-          {/* LOGIN LINK */}
           <p className="text-center text-xs sm:text-sm text-gray-500 mt-6">
             Already have an account?{" "}
             <Link href="/signin" className="text-blue-600 font-medium hover:underline">
