@@ -2,12 +2,26 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import InputField from "@/components/ui/InputField";
+import { useAuth } from "@/context/AuthContext";
+
+function displayNameFromEmail(email: string) {
+  const local = email.split("@")[0] || "Learner";
+  return local
+    .replace(/[._-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+}
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { signIn } = useAuth();
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,9 +35,19 @@ export default function LoginPage() {
       return;
     }
     setLoading(true);
-    // TODO: dispatch login thunk here
-    console.log(form);
-    setLoading(false);
+    try {
+      // TODO: replace with real API auth; on success use session + httpOnly cookie
+      const email = form.email.trim();
+      signIn({ email, name: displayNameFromEmail(email) });
+      const next =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search).get("next") || "/"
+          : "/";
+      router.push(next);
+      router.refresh();
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

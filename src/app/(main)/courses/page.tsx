@@ -1,9 +1,5 @@
-import React from 'react'
+import CoursesListing from "@/components/courses/CoursesListing";
 
-function Courses() {
-  return (
-    <div>Courses</div>
-  )
+export default function Courses() {
+  return <CoursesListing />;
 }
-
-export default Courses

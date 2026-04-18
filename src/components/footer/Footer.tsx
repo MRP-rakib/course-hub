@@ -66,6 +66,11 @@ export default function Footer() {
                   About
                 </Link>
               </li>
+              <li>
+                <Link href="/dashboard" className={footerLink}>
+                  Dashboard
+                </Link>
+              </li>
             </ul>
           </div>
 
