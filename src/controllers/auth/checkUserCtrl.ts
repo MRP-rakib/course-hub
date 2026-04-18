@@ -1,34 +1,40 @@
 import { CheckUser } from "@/services/auth/checkUser";
 import { CheckUserSchema } from "@/validation/auth/checkUserSchema";
-import z from "zod";
 
+export const CheckUserCtrl = async (req: Request) => {
+  let body: unknown;
 
-export const CheckUserCtrl=async(req:Request)=>{
-        try {
-            const body = await req.json()
-            const result = CheckUserSchema.safeParse(body)
+  try {
+    body = await req.json();
+  } catch {
+    return Response.json(
+      { success: false, error: "Invalid JSON body" },
+      { status: 400 }
+    );
+  }
 
-           if(!result.success){
-            return Response.json({
-                success:false,
-                errors:z.treeifyError(result.error)
-            },{status:400})
-           }
-            
-          const message= await CheckUser(result.data)
+  try {
+    const result = CheckUserSchema.safeParse(body);
 
-         return Response.json({
-            success:true,
-            message
-         },{status:200})
+    if (!result.success) {
+      return Response.json(
+        { success: false, error: result.error.issues[0].message },
+        { status: 400 }
+      );
+    }
 
-            
-        } catch (error) {
-            console.error(error)
-            return Response.json({
-                sussess:false,
-                message:error
-            },{status:500})
-            
-        }
-}
+    const message = await CheckUser(result.data);
+
+    return Response.json(
+      { success: true, message },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    const err = error as Error;
+    return Response.json(
+      { success: false, message: err.message || "Internal server error" },
+      { status: 500 }
+    );
+  }
+};

@@ -1,8 +1,14 @@
-import React from 'react'
+import Categories from '@/components/categories/Categories'
+import FeatureCourse from '@/components/courses/FeatureCourse'
+import Hero from '@/components/hero/Hero'
 
 function home() {
   return (
-    <div>home</div>
+    <div>
+      <Hero />
+      <Categories/>
+      <FeatureCourse />
+    </div>
   )
 }
 

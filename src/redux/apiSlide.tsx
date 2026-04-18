@@ -20,7 +20,7 @@ const initialState: ApiState = {
 };
 
 const apiSlice = createSlice({
-  name: "api",
+  name: "apiSlice",
   initialState,
   reducers: {
     clearApiState: (state) => {
@@ -31,30 +31,28 @@ const apiSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // 🟡 loading
       .addCase(FetchAPI.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.data = null;
       })
 
-      // 🟢 success
       .addCase(FetchAPI.fulfilled, (state, action) => {
         state.loading = false;
-
         state.data = {
           message: action.payload?.message,
           token: action.payload?.token,
-          data: action.payload?.data ?? action.payload,
+          data: action.payload?.data ?? null,
         };
       })
 
-      // 🔴 error
       .addCase(FetchAPI.rejected, (state, action) => {
         state.loading = false;
-        state.error = (action.payload as string) ||
-    action.error.message ||
-    "Something went wrong";
-});
+        state.error =
+          typeof action.payload === "string"
+            ? action.payload
+            : action.error.message ?? "Something went wrong";
+      });
   },
 });
 

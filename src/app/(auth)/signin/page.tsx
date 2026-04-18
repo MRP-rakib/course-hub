@@ -5,57 +5,83 @@ import Link from "next/link";
 import InputField from "@/components/ui/InputField";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   };
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!form.email || !form.password) {
       setError("Please fill all fields");
       return;
     }
-
+    setLoading(true);
+    // TODO: dispatch login thunk here
     console.log(form);
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-100 via-white to-purple-100 px-4 py-10">
+    <div className="relative min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-12 overflow-hidden">
+      <div className="fixed top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />
+      <div className="fixed bottom-[-80px] right-[-80px] w-[400px] h-[400px] rounded-full bg-pink-500 opacity-[0.18] blur-[80px] pointer-events-none" />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-cyan-400 opacity-[0.18] blur-[80px] pointer-events-none" />
 
-      <div className="w-full max-w-md">
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-        {/* CARD */}
-        <div className="bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-5 sm:p-8">
+      <div className="relative w-full max-w-md">
+        <div className="mb-6 text-center">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 text-xs font-medium text-white/35 transition-colors hover:text-violet-400"
+          >
+            ← Back to home
+          </Link>
+        </div>
 
-          {/* TITLE */}
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800">
-            Sign In
+        <div className="text-center mb-8">
+          <div className="inline-block mb-5 rounded-full border border-violet-500/25 bg-violet-500/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-widest text-violet-400">
+            Sign in
+          </div>
+          <h1 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-2">
+            Welcome{" "}
+            <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+              back
+            </span>
           </h1>
+          <p className="text-sm text-white/35">Sign in to continue to Course Hub</p>
+        </div>
 
-          <p className="text-center text-gray-500 text-xs sm:text-sm mt-1">
-            Welcome back 👋
-          </p>
+        <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 sm:p-9 backdrop-blur-sm overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+          <div className="absolute top-0 left-[12%] right-[12%] h-px bg-gradient-to-r from-transparent via-violet-500/45 to-transparent" />
 
-          {/* ERROR */}
           {error && (
-            <div className="mt-4 bg-red-100 text-red-600 text-xs sm:text-sm px-4 py-2 rounded-lg">
-              {error}
+            <div
+              role="alert"
+              className="mb-6 flex items-start gap-2 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200"
+            >
+              <span className="shrink-0" aria-hidden>
+                ⚠
+              </span>
+              <span>{error}</span>
             </div>
           )}
 
-          {/* FORM */}
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-
+          <form onSubmit={handleSubmit} className="space-y-5">
             <InputField
+              variant="dark"
               label="Email"
               name="email"
               type="email"
@@ -63,41 +89,59 @@ export default function LoginPage() {
               onChange={handleChange}
             />
 
-            <InputField
-              label="Password"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-            />
+            <div>
+              <InputField
+                variant="dark"
+                label="Password"
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+              />
+              <div className="mt-2 flex justify-end">
+                <button
+                  type="button"
+                  className="text-xs font-medium text-violet-400 transition-colors hover:text-violet-300"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            </div>
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold transition-all shadow-md"
+              disabled={loading}
+              className="relative mt-2 w-full overflow-hidden rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
             >
-              Login
+              {loading ? (
+                <span className="inline-flex gap-1">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse [animation-delay:150ms]" />
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse [animation-delay:300ms]" />
+                </span>
+              ) : (
+                "Sign in →"
+              )}
             </button>
           </form>
 
-          {/* LINKS */}
-          <div className="mt-6 text-center space-y-2">
-
-            <p className="text-xs sm:text-sm text-gray-500">
-              Don’t have an account?{" "}
-              <Link
-                href="/join"
-                className="text-blue-600 font-medium hover:underline"
-              >
-                Sign up
-              </Link>
-            </p>
-
-            <p className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer">
-              Forgot password?
-            </p>
-
+          <div className="relative my-8 flex items-center gap-4">
+            <div className="h-px flex-1 bg-white/[0.08]" />
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-white/25">
+              or
+            </span>
+            <div className="h-px flex-1 bg-white/[0.08]" />
           </div>
 
+          <p className="text-center text-xs text-white/25">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/join"
+              className="font-medium text-violet-400 transition-colors hover:text-violet-300"
+            >
+              Sign up
+            </Link>
+          </p>
         </div>
       </div>
     </div>
