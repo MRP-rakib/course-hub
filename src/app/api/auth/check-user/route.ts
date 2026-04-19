@@ -1,5 +1,5 @@
-import { CheckUserCtrl } from "@/controllers/auth/checkUserCtrl";
-import dbConnect from "@/lib/db";
+import { CheckUserCtrl } from "@/backend/controllers/auth/checkUserCtrl";
+import dbConnect from "@/backend/lib/db";
 
  export async function POST(req:Request) {
       await dbConnect()

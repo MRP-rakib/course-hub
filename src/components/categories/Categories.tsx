@@ -64,8 +64,8 @@ const categories = [
 
 export default function Categories() {
   return (
-    <section className="relative overflow-hidden border-b border-white/[0.06] bg-[#0a0a0f]">
-      <div className="pointer-events-none absolute left-1/2 top-0 h-[280px] w-[min(100%,820px)] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[110px]" />
+    <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0f]">
+      <div className="pointer-events-none absolute left-1/2 top-0 h-70 w-[min(100%,820px)] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[110px]" />
 
       <Container className="relative py-14 md:py-16 lg:py-20">
         <div className="mx-auto max-w-2xl text-center">
@@ -89,9 +89,9 @@ export default function Categories() {
               <Link
                 key={category.name}
                 href={category.href}
-                className="group rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/30 hover:bg-violet-500/[0.07]"
+                className="group rounded-2xl border border-white/8 bg-white/2 p-4 transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/30 hover:bg-violet-500/[0.07]"
               >
-                <div className="inline-flex rounded-xl border border-white/[0.1] bg-white/[0.03] p-2.5 text-violet-300 transition-colors group-hover:border-violet-500/35 group-hover:bg-violet-500/10">
+                <div className="inline-flex rounded-xl border border-white/1 bg-white/3 p-2.5 text-violet-300 transition-colors group-hover:border-violet-500/35 group-hover:bg-violet-500/10">
                   <Icon size={18} />
                 </div>
                 <h3 className="mt-4 text-base font-semibold text-white">{category.name}</h3>

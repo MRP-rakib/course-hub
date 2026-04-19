@@ -1,7 +1,7 @@
-import OtpModel from "@/model/otpSchema";
-import UserModel from "@/model/usersSchema";
-import { sendOTP } from "@/utils/mail";
-import { generateOTP } from "@/utils/otp";
+import OtpModel from "@/backend/model/otpSchema";
+import UserModel from "@/backend/model/usersSchema";
+import { sendOTP } from "@/backend/utils/mail";
+import { generateOTP } from "@/backend/utils/otp";
 
 interface userDataType {
   username: string;

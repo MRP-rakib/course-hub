@@ -5,12 +5,12 @@ import Hero from '@/components/hero/Hero'
 
 function home() {
   return (
-    <div>
+    <>
       <Hero />
       <Categories/>
       <FeatureCourse />
       <FeatureInstructor />
-    </div>
+    </>
   )
 }
 

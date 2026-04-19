@@ -1,5 +1,5 @@
-import { CheckUser } from "@/services/auth/checkUser";
-import { CheckUserSchema } from "@/validation/auth/checkUserSchema";
+import { CheckUser } from "@/backend/services/auth/checkUser";
+import { CheckUserSchema } from "@/backend/validation/auth/checkUserSchema";
 
 export const CheckUserCtrl = async (req: Request) => {
   let body: unknown;

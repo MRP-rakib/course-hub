@@ -15,7 +15,7 @@ export default function Footer() {
 
   return (
     <footer className="relative mt-auto border-t border-white/[0.07] bg-[#0a0a0f] overflow-hidden">
-      <div className="pointer-events-none absolute bottom-0 left-1/2 h-[280px] w-[min(100%,720px)] -translate-x-1/2 translate-y-1/2 rounded-full bg-violet-600/10 blur-[100px]" />
+      <div className="pointer-events-none absolute bottom-0 left-1/2 h-70 w-[min(100%,720px)] -translate-x-1/2 translate-y-1/2 rounded-full bg-violet-600/10 blur-[100px]" />
 
       <div className="relative mx-auto max-w-6xl px-6 py-14 lg:py-16">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
@@ -24,7 +24,7 @@ export default function Footer() {
             <Link href="/" className="inline-flex items-center gap-2">
               <span className="font-display text-xl font-extrabold tracking-tight text-white">
                 Course{" "}
-                <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
                   Hub
                 </span>
               </span>
@@ -41,8 +41,6 @@ export default function Footer() {
               Get started →
             </Link>
           </div>
-
-          {/* Quick links */}
           <div>
             <h3 className={sectionTitle}>Quick links</h3>
             <ul className="flex flex-col gap-2.5">
@@ -66,15 +64,9 @@ export default function Footer() {
                   About
                 </Link>
               </li>
-              <li>
-                <Link href="/dashboard" className={footerLink}>
-                  Dashboard
-                </Link>
-              </li>
             </ul>
           </div>
 
-          {/* Support */}
           <div>
             <h3 className={sectionTitle}>Support</h3>
             <ul className="flex flex-col gap-2.5">
@@ -96,7 +88,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h3 className={sectionTitle}>Contact</h3>
             <ul className="flex flex-col gap-3 text-sm text-white/35">
@@ -134,7 +125,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row sm:items-center">
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/6 pt-8 sm:flex-row sm:items-center">
           <p className="text-center text-xs text-white/25 sm:text-left">
             © {year} Course Hub. All rights reserved.
           </p>

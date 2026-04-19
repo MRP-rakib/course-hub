@@ -22,7 +22,7 @@ export default function CourseView({ course }: CourseViewProps) {
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_minmax(280px,340px)] lg:items-start">
           <div>
-            <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.04]">
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/8 bg-white/4">
               <Image
                 src={course.thumbnail}
                 alt={course.title}
@@ -42,10 +42,10 @@ export default function CourseView({ course }: CourseViewProps) {
               <span className="inline-flex rounded-full border border-violet-500/25 bg-violet-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-violet-300">
                 {course.category}
               </span>
-              <span className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-xs text-white/60">
+              <span className="rounded-lg border border-white/8 bg-white/3 px-2.5 py-1 text-xs text-white/60">
                 {course.level}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-xs text-white/60">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/8 bg-white/3 px-2.5 py-1 text-xs text-white/60">
                 <Clock3 size={13} className="shrink-0" aria-hidden />
                 {course.duration}
               </span>
@@ -60,7 +60,7 @@ export default function CourseView({ course }: CourseViewProps) {
               <span className="font-medium text-white/80">{course.instructor}</span>
             </p>
 
-            <div className="mt-8 border-t border-white/[0.08] pt-8">
+            <div className="mt-8 border-t border-white/8 pt-8">
               <h2 className="text-lg font-bold text-white">About this course</h2>
               <p className="mt-3 text-[15px] leading-relaxed text-white/65">{course.description}</p>
             </div>
@@ -81,11 +81,11 @@ export default function CourseView({ course }: CourseViewProps) {
             </div>
           </div>
 
-          <aside className="rounded-2xl border border-white/[0.1] bg-white/[0.03] p-6 lg:sticky lg:top-24">
+          <aside className="rounded-2xl border border-white/1 bg-white/3 p-6 lg:sticky lg:top-24">
             <p className="font-display text-3xl font-extrabold text-white">{course.price}</p>
             <Link
               href="/join"
-              className="mt-5 flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90"
+              className="mt-5 flex w-full items-center justify-center rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-4 py-3 text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90"
             >
               Enroll now
             </Link>
@@ -96,7 +96,7 @@ export default function CourseView({ course }: CourseViewProps) {
               View all courses
             </Link>
 
-            <dl className="mt-8 space-y-4 border-t border-white/[0.08] pt-6 text-sm">
+            <dl className="mt-8 space-y-4 border-t border-white/8 pt-6 text-sm">
               <div className="flex items-center justify-between gap-3">
                 <dt className="inline-flex items-center gap-2 text-white/45">
                   <Star size={15} className="text-amber-300" aria-hidden />

@@ -81,7 +81,7 @@ const sections: FaqSection[] = [
 
 function FaqDetails({ item }: { item: FaqItem }) {
   return (
-    <details className="group border-b border-white/[0.08] py-4 first:pt-0 last:border-b-0">
+    <details className="group border-b border-white/8 py-4 first:pt-0 last:border-b-0">
       <summary className="cursor-pointer list-none pr-8 font-medium text-white transition-colors marker:content-none group-open:text-violet-200 [&::-webkit-details-marker]:hidden">
         <span className="flex items-start justify-between gap-3">
           {item.q}
@@ -100,8 +100,8 @@ function FaqDetails({ item }: { item: FaqItem }) {
 export default function HelpContent() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-white/[0.06] bg-[#0a0a0f]">
-        <div className="pointer-events-none absolute right-0 top-0 h-[280px] w-[min(100%,520px)] rounded-full bg-violet-600/15 blur-[100px]" />
+      <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0f]">
+        <div className="pointer-events-none absolute right-0 top-0 h-70 w-[min(100%,520px)] rounded-full bg-violet-600/15 blur-[100px]" />
         <Container className="relative py-16 md:py-20">
           <div className="mx-auto max-w-2xl text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-xs font-semibold tracking-wide text-violet-300">
@@ -110,7 +110,7 @@ export default function HelpContent() {
             </span>
             <h1 className="mt-5 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
               How can we{" "}
-              <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
                 help you?
               </span>
             </h1>
@@ -122,13 +122,13 @@ export default function HelpContent() {
         </Container>
       </section>
 
-      <section className="border-b border-white/[0.06] bg-[#0a0a0f] py-12 md:py-16">
+      <section className="border-b border-white/6 bg-[#0a0a0f] py-12 md:py-16">
         <Container>
           <div className="mx-auto max-w-3xl">
             {sections.map((section) => (
               <div key={section.title} className="mb-12 last:mb-0">
                 <h2 className="font-display text-xl font-bold text-white">{section.title}</h2>
-                <div className="mt-4 rounded-2xl border border-white/[0.08] bg-white/[0.02] px-5 md:px-6">
+                <div className="mt-4 rounded-2xl border border-white/8 bg-white/2 px-5 md:px-6">
                   {section.items.map((item) => (
                     <FaqDetails key={item.q} item={item} />
                   ))}
@@ -142,7 +142,7 @@ export default function HelpContent() {
       <section className="bg-[#08080c] py-12 md:py-16">
         <Container>
           <div className="mx-auto grid max-w-4xl gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6">
+            <div className="rounded-2xl border border-white/8 bg-white/3 p-6">
               <div className="inline-flex rounded-lg border border-violet-500/25 bg-violet-500/10 p-2 text-violet-300">
                 <LifeBuoy size={22} aria-hidden />
               </div>
@@ -158,7 +158,7 @@ export default function HelpContent() {
                 <ArrowRight size={16} />
               </Link>
             </div>
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6">
+            <div className="rounded-2xl border border-white/8 bg-white/3 p-6">
               <div className="inline-flex rounded-lg border border-violet-500/25 bg-violet-500/10 p-2 text-violet-300">
                 <Mail size={22} aria-hidden />
               </div>

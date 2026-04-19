@@ -34,10 +34,10 @@ export default function CourseCard({
   ctaLabel = "View Course",
 }: CourseCardProps) {
   return (
-    <article className="group overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/30 hover:bg-violet-500/[0.07]">
+    <article className="group overflow-hidden rounded-2xl border border-white/8 bg-white/2 transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/30 hover:bg-violet-500/[0.07]">
       <Link
         href={href}
-        className="relative block aspect-[16/10] w-full overflow-hidden bg-white/[0.04]"
+        className="relative block aspect-16/10 w-full overflow-hidden bg-white/4"
       >
         <Image
           src={thumbnail}
@@ -64,8 +64,8 @@ export default function CourseCard({
         <p className="mt-3 text-sm text-white/60">By {instructor}</p>
 
         <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/55">
-          <p className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1.5">{level}</p>
-          <p className="rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1.5">
+          <p className="rounded-lg border border-white/8 bg-white/3 px-2.5 py-1.5">{level}</p>
+          <p className="rounded-lg border border-white/8 bg-white/3 px-2.5 py-1.5">
             {lessons} lessons
           </p>
         </div>
@@ -85,11 +85,11 @@ export default function CourseCard({
           </p>
         </div>
 
-        <div className="mt-5 flex items-center justify-between border-t border-white/[0.08] pt-4">
+        <div className="mt-5 flex items-center justify-between border-t border-white/8 pt-4">
           <p className="text-xl font-bold text-white">{price}</p>
           <Link
             href={href}
-            className="rounded-lg border border-white/[0.12] bg-white/[0.03] px-3 py-2 text-sm font-semibold text-white transition-colors hover:border-violet-500/35 hover:bg-violet-500/10 hover:text-violet-200"
+            className="rounded-lg border border-white/12 bg-white/3 px-3 py-2 text-sm font-semibold text-white transition-colors hover:border-violet-500/35 hover:bg-violet-500/10 hover:text-violet-200"
           >
             {ctaLabel}
           </Link>

@@ -4,12 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { FetchAPI } from "@/fetch/fetchApi";
+import { FetchAPI } from "@/redux/fetch/fetchApi";
 
 export default function SignupPage() {
   const api = useAppSelector((state) => state.api);
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
+  const [storeData,setStoreData] = useState({
+    username: "",
+    fullname: "",
+    email: "",
+  })
 
   const [form, setForm] = useState({
     username: "",
@@ -45,6 +50,13 @@ export default function SignupPage() {
           },
         })
       ).unwrap();
+      setStoreData({
+        username:form.username,
+        fullname:form.fullname,
+        email:form.email
+      })
+     
+      
       setStep(2);
     } catch (error) {
       const err = error as string;
@@ -60,7 +72,8 @@ export default function SignupPage() {
     setError("");
     setStep(3);
   };
-
+ console.log(storeData);
+ 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.password || !form.confirmPassword) {
@@ -76,13 +89,14 @@ export default function SignupPage() {
   };
 
   const steps = ["Details", "Verify", "Password"];
+  
 
   return (
     <div className="relative min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-12 overflow-hidden">
       {/* Orbs — match join page */}
-      <div className="fixed top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />
-      <div className="fixed bottom-[-80px] right-[-80px] w-[400px] h-[400px] rounded-full bg-pink-500 opacity-[0.18] blur-[80px] pointer-events-none" />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-cyan-400 opacity-[0.18] blur-[80px] pointer-events-none" />
+      <div className="fixed -top-25 -left-25 w-125 h-125 rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />
+      <div className="fixed -bottom-20 -right-20 w-100 h-100 rounded-full bg-pink-500 opacity-[0.18] blur-[80px] pointer-events-none" />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-75 h-75 rounded-full bg-cyan-400 opacity-[0.18] blur-[80px] pointer-events-none" />
 
       <div
         className="fixed inset-0 pointer-events-none"
@@ -109,7 +123,7 @@ export default function SignupPage() {
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-2">
             Create your{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
               account
             </span>
           </h1>
@@ -118,8 +132,8 @@ export default function SignupPage() {
           </p>
         </div>
 
-        <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 sm:p-9 backdrop-blur-sm overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
-          <div className="absolute top-0 left-[12%] right-[12%] h-px bg-gradient-to-r from-transparent via-violet-500/45 to-transparent" />
+        <div className="relative rounded-2xl border border-white/8 bg-white/4 p-8 sm:p-9 backdrop-blur-sm overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+          <div className="absolute top-0 left-[12%] right-[12%] h-px bg-linear-to-r from-transparent via-violet-500/45 to-transparent" />
 
           <div className="relative flex items-start justify-between gap-2 mb-8 pt-1">
             {steps.map((label, i) => {
@@ -137,7 +151,7 @@ export default function SignupPage() {
                             ? "border-violet-500/40 bg-violet-500/20 text-violet-300"
                             : isDone
                               ? "border-emerald-500/35 bg-emerald-500/15 text-emerald-400"
-                              : "border-white/[0.08] bg-white/[0.03] text-white/30"
+                              : "border-white/8 bg-white/3 text-white/30"
                         }
                       `}
                     >
@@ -155,8 +169,8 @@ export default function SignupPage() {
                   {i < steps.length - 1 && (
                     <div
                       className={`
-                        h-px flex-1 mx-1 sm:mx-2 mt-[18px] min-w-[8px] transition-colors
-                        ${isDone ? "bg-gradient-to-r from-emerald-500/40 to-violet-500/30" : "bg-white/[0.06]"}
+                        h-px flex-1 mx-1 sm:mx-2 mt-4.5 min-w-2 transition-colors
+                        ${isDone ? "bg-linear-to-r from-emerald-500/40 to-violet-500/30" : "bg-white/6"}
                       `}
                     />
                   )}
@@ -216,7 +230,7 @@ export default function SignupPage() {
                 type="button"
                 onClick={nextStep1}
                 disabled={api.loading}
-                className="relative mt-2 w-full overflow-hidden rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
+                className="relative mt-2 w-full overflow-hidden rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
               >
                 {api.loading ? (
                   <span className="inline-flex gap-1">
@@ -249,14 +263,14 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={verifyCode}
-                className="w-full rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99]"
+                className="w-full rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99]"
               >
                 Verify code →
               </button>
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-medium text-white/60 transition-colors hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white/90"
+                className="w-full rounded-lg border border-white/8 bg-white/4 px-4 py-3 text-sm font-medium text-white/60 transition-colors hover:border-white/12 hover:bg-white/6 hover:text-white/90"
               >
                 ← Back
               </button>
@@ -283,14 +297,14 @@ export default function SignupPage() {
               />
               <button
                 type="submit"
-                className="mt-2 w-full rounded-lg bg-gradient-to-r from-violet-600 to-emerald-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99]"
+                className="mt-2 w-full rounded-lg bg-linear-to-r from-violet-600 to-emerald-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99]"
               >
                 Create account →
               </button>
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-medium text-white/60 transition-colors hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-white/90"
+                className="w-full rounded-lg border border-white/8 bg-white/4 px-4 py-3 text-sm font-medium text-white/60 transition-colors hover:border-white/12 hover:bg-white/6 hover:text-white/90"
               >
                 ← Back
               </button>

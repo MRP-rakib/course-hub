@@ -22,7 +22,7 @@ export default function InstructorProfileView({ instructor }: InstructorProfileV
 
         <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_minmax(280px,340px)] lg:items-start">
           <div>
-            <div className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-violet-500/[0.12] to-transparent px-6 pb-10 pt-12 md:px-10 md:pt-14">
+            <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-b from-violet-500/12 to-transparent px-6 pb-10 pt-12 md:px-10 md:pt-14">
               {instructor.badge ? (
                 <span className="absolute right-5 top-5 rounded-full border border-emerald-500/40 bg-[#0a0a0f]/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-300 backdrop-blur-sm">
                   {instructor.badge}
@@ -48,15 +48,15 @@ export default function InstructorProfileView({ instructor }: InstructorProfileV
                   </h1>
                   <p className="mt-4 text-[15px] leading-relaxed text-white/65">{instructor.bio}</p>
                   <div className="mt-6 flex flex-wrap justify-center gap-3 md:justify-start">
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-sm text-white/70">
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/8 bg-white/4 px-3 py-1.5 text-sm text-white/70">
                       <Star size={15} className="text-amber-300" aria-hidden />
                       {instructor.rating.toFixed(1)}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-sm text-white/70">
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/8 bg-white/4 px-3 py-1.5 text-sm text-white/70">
                       <Users2 size={15} aria-hidden />
                       {instructor.students.toLocaleString()} students
                     </span>
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-sm text-white/70">
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/8 bg-white/4 px-3 py-1.5 text-sm text-white/70">
                       <BookOpen size={15} aria-hidden />
                       {instructor.courses} courses
                     </span>
@@ -65,7 +65,7 @@ export default function InstructorProfileView({ instructor }: InstructorProfileV
               </div>
             </div>
 
-            <div className="mt-10 border-t border-white/[0.08] pt-10">
+            <div className="mt-10 border-t border-white/8 pt-10">
               <h2 className="text-lg font-bold text-white">About</h2>
               <p className="mt-3 text-[15px] leading-relaxed text-white/65">{instructor.about}</p>
             </div>
@@ -92,14 +92,14 @@ export default function InstructorProfileView({ instructor }: InstructorProfileV
             </div>
           </div>
 
-          <aside className="rounded-2xl border border-white/[0.1] bg-white/[0.03] p-6 lg:sticky lg:top-24">
+          <aside className="rounded-2xl border border-white/1 bg-white/3 p-6 lg:sticky lg:top-24">
             <p className="text-sm font-medium uppercase tracking-wide text-white/45">Instructor</p>
             <p className="mt-1 font-display text-xl font-bold text-white">{instructor.name}</p>
             <p className="mt-1 text-sm text-violet-300">{instructor.role}</p>
 
             <Link
               href="/courses"
-              className="mt-6 flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90"
+              className="mt-6 flex w-full items-center justify-center rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-4 py-3 text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90"
             >
               View their courses
             </Link>
@@ -110,7 +110,7 @@ export default function InstructorProfileView({ instructor }: InstructorProfileV
               Join Course Hub
             </Link>
 
-            <dl className="mt-8 space-y-4 border-t border-white/[0.08] pt-6 text-sm">
+            <dl className="mt-8 space-y-4 border-t border-white/8 pt-6 text-sm">
               <div className="flex items-center justify-between gap-3">
                 <dt className="text-white/45">Rating</dt>
                 <dd className="font-semibold text-white">{instructor.rating.toFixed(1)}</dd>

@@ -17,7 +17,7 @@ export default function InstructorsListing() {
   }, [page]);
 
   return (
-    <section className="border-b border-white/[0.06] bg-[#0a0a0f] py-14 md:py-16 lg:py-20">
+    <section className="border-b border-white/6 bg-[#0a0a0f] py-14 md:py-16 lg:py-20">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-xs font-semibold tracking-wide text-violet-300">

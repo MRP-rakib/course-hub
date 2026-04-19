@@ -2,59 +2,45 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import InputField from "@/components/ui/InputField";
-import { useAuth } from "@/context/AuthContext";
-
-function displayNameFromEmail(email: string) {
-  const local = email.split("@")[0] || "Learner";
-  return local
-    .replace(/[._-]+/g, " ")
-    .split(" ")
-    .filter(Boolean)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(" ");
-}
+import { useAppSelector } from "@/redux/hooks";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
-  const router = useRouter();
-
+  const {loading} = useAppSelector(state=>state.api)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.email || !form.password) {
-      setError("Please fill all fields");
-      return;
-    }
-    setLoading(true);
-    try {
-      // TODO: replace with real API auth; on success use session + httpOnly cookie
-      const email = form.email.trim();
-      signIn({ email, name: displayNameFromEmail(email) });
-      const next =
-        typeof window !== "undefined"
-          ? new URLSearchParams(window.location.search).get("next") || "/"
-          : "/";
-      router.push(next);
-      router.refresh();
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!form.email || !form.password) {
+  //     setError("Please fill all fields");
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   try {
+  //     // TODO: replace with real API auth; on success use session + httpOnly cookie
+  //     const email = form.email.trim();
+  //     signIn({ email, name: displayNameFromEmail(email) });
+  //     const next =
+  //       typeof window !== "undefined"
+  //         ? new URLSearchParams(window.location.search).get("next") || "/"
+  //         : "/";
+  //     router.push(next);
+  //     router.refresh();
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="relative min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-12 overflow-hidden">
-      <div className="fixed top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />
-      <div className="fixed bottom-[-80px] right-[-80px] w-[400px] h-[400px] rounded-full bg-pink-500 opacity-[0.18] blur-[80px] pointer-events-none" />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-cyan-400 opacity-[0.18] blur-[80px] pointer-events-none" />
+      <div className="fixed -top-25 -left-25 w-125 h-125 rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />
+      <div className="fixed -bottom-20 -right-20 w-100 h-100 rounded-full bg-pink-500 opacity-[0.18] blur-[80px] pointer-events-none" />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-75 h-75 rounded-full bg-cyan-400 opacity-[0.18] blur-[80px] pointer-events-none" />
 
       <div
         className="fixed inset-0 pointer-events-none"
@@ -81,15 +67,15 @@ export default function LoginPage() {
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-2">
             Welcome{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
               back
             </span>
           </h1>
           <p className="text-sm text-white/35">Sign in to continue to Course Hub</p>
         </div>
 
-        <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.04] p-8 sm:p-9 backdrop-blur-sm overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
-          <div className="absolute top-0 left-[12%] right-[12%] h-px bg-gradient-to-r from-transparent via-violet-500/45 to-transparent" />
+        <div className="relative rounded-2xl border border-white/8 bg-white/4 p-8 sm:p-9 backdrop-blur-sm overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+          <div className="absolute top-0 left-[12%] right-[12%] h-px bg-linear-to-r from-transparent via-violet-500/45 to-transparent" />
 
           {error && (
             <div
@@ -103,7 +89,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form className="space-y-5">
             <InputField
               variant="dark"
               label="Email"
@@ -134,8 +120,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
-              className="relative mt-2 w-full overflow-hidden rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
+              className="relative mt-2 w-full overflow-hidden rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
             >
               {loading ? (
                 <span className="inline-flex gap-1">
@@ -150,11 +135,11 @@ export default function LoginPage() {
           </form>
 
           <div className="relative my-8 flex items-center gap-4">
-            <div className="h-px flex-1 bg-white/[0.08]" />
+            <div className="h-px flex-1 bg-white/8" />
             <span className="text-[10px] font-semibold uppercase tracking-widest text-white/25">
               or
             </span>
-            <div className="h-px flex-1 bg-white/[0.08]" />
+            <div className="h-px flex-1 bg-white/8" />
           </div>
 
           <p className="text-center text-xs text-white/25">
