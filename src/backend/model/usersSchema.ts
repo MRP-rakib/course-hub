@@ -42,12 +42,10 @@ const UserSchema = new Schema<User>(
 
     dateOfBirth: {
       type: Date,
-      required: true,
     },
 
     mobileNumber: {
       type: String,
-      required: true,
     },
 
     bio: {
@@ -58,7 +56,6 @@ const UserSchema = new Schema<User>(
     bloodGroup: {
       type: String,
       enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-      required: true,
     },
     role: {
       type: String,

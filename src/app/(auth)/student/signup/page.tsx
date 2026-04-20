@@ -5,9 +5,11 @@ import Link from "next/link";
 import InputField from "@/components/ui/InputField";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { FetchAPI } from "@/redux/fetch/fetchApi";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const api = useAppSelector((state) => state.api);
+  const route = useRouter()
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
   const [storeData,setStoreData] = useState({
@@ -20,7 +22,7 @@ export default function SignupPage() {
     username: "",
     fullname: "",
     email: "",
-    code: "",
+    code:'',
     password: "",
     confirmPassword: "",
   });
@@ -64,17 +66,35 @@ export default function SignupPage() {
     }
   };
 
-  const verifyCode = () => {
+  const verifyCode =async () => {
     if (!form.code) {
       setError("Enter verification code");
       return;
     }
-    setError("");
-    setStep(3);
+    try {
+      await dispatch(
+        FetchAPI({
+          endpoint: "/api/auth/verifycode",
+          method: "POST",
+          body: {
+            email: storeData.email,
+            code:form.code
+          },
+        })
+      ).unwrap();
+     
+      
+        setStep(3);
+      
+      
+    } catch (error) {
+      const err = error as string;
+      setError(err);
+    }
   };
- console.log(storeData);
  
-  const handleSubmit = (e: React.FormEvent) => {
+ 
+  const handleSubmit =async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!form.password || !form.confirmPassword) {
       setError("Password required");
@@ -84,8 +104,27 @@ export default function SignupPage() {
       setError("Passwords do not match");
       return;
     }
-    setError("");
-    setSuccess("Account created successfully 🎉");
+     try {
+      await dispatch(
+        FetchAPI({
+          endpoint: "/api/auth/signup",
+          method: "POST",
+          body: {
+            email: storeData.email,
+            fullname:storeData.fullname,
+            username:storeData.username,
+            password:form.password
+          },
+        })
+      ).unwrap();
+     
+     setSuccess(api.data?.message||'account create done 2')
+      
+      
+    } catch (error) {
+      const err = error as string;
+      setError(err);
+    }
   };
 
   const steps = ["Details", "Verify", "Password"];

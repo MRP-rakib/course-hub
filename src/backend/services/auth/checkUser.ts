@@ -10,27 +10,28 @@ interface userDataType {
 
 export const CheckUser = async (userData: userDataType) => {
   const { username, email } = userData;
+  const existingUsername = await UserModel.findOne({username})
 
-  const existingUser = await UserModel.findOne({
-    $or: [{ username }, { email }],
-  });
+  if (existingUsername) {
+    throw new Error("Username already exists");
+  }
+ const existingEmail = await UserModel.findOne({email})
 
-  if (existingUser) {
-    throw new Error("Username or Email already exists");
+  if (existingEmail) {
+    throw new Error("email already exists");
   }
 
-  const otp = generateOTP();
+  const code = generateOTP();
 
   await OtpModel.deleteMany({ email });
 
   const otpRecord = await OtpModel.create({
     email,
-    otp,
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    code
   });
 
   try {
-    await sendOTP(email, otp);
+    await sendOTP(email, code);
   } catch {
     await OtpModel.deleteOne({ _id: otpRecord._id });
     throw new Error("Failed to send OTP email. Please try again.");
