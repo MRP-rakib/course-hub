@@ -6,6 +6,8 @@ import { MenuItem } from "../lib/MenuItem";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Container from "../utils/Container";
+import { useAppSelector } from "@/redux/hooks";
+import ProfileDropdown from "../auth/ProfileDropdown";
 interface MenuPropsType {
   menu: boolean;
   setMenu: (value: boolean) => void;
@@ -13,7 +15,9 @@ interface MenuPropsType {
 }
 function Navbar() {
   const [menu, setMenu] = useState<boolean>(false);
+  const {user} =useAppSelector(state=>state.auth)
   const pathname = usePathname();
+console.log('user:',user);
 
   return (
     <>
@@ -47,8 +51,8 @@ function Navbar() {
               </li>
             ))}
           </ul>
-
-          <div className="flex items-center gap-2 sm:gap-3">
+          {user?(<ProfileDropdown/>):(
+            <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/signin"
               className="hidden rounded-lg border border-white/1 bg-white/4 px-3 py-2 font-display text-xs font-bold tracking-wide text-white/85 transition-colors hover:border-white/16 hover:bg-white/[0.07] sm:inline-flex"
@@ -70,6 +74,8 @@ function Navbar() {
               <Menu size={17} />
             </button>
           </div>
+          )}
+          
         </Container>
       </nav>
 

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { FetchAPI } from "@/redux/fetch/fetchApi";
+import { FetchAPI } from "@/redux/fetchApi";
 
 interface ApiState {
   message: string | null;

@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { FetchAPI } from "@/redux/fetch/fetchApi";
+import { FetchAPI } from "@/redux/fetchApi";
 import { Check, TriangleAlert } from "lucide-react";
+import { setToken } from "@/redux/auth/authSlice";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -14,10 +16,10 @@ export default function LoginPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
+ const route = useRouter()
 const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
      e.preventDefault()
-   await dispatch(
+  const result = await dispatch(
       FetchAPI({
         endpoint:'/api/auth/signin',
         method:'POST',
@@ -27,7 +29,20 @@ const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
         }
       })
     )
+
+    
+    
+    if(FetchAPI.fulfilled.match(result)){
+      const token = result.payload.token as string
+      console.log('token',token);
+      
+      dispatch(setToken(token))
+    }
+route.replace('/')
+
 }
+
+
   return (
     <div className="relative min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-12 overflow-hidden">
       <div className="fixed -top-25 -left-25 w-125 h-125 rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />

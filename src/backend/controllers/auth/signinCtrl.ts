@@ -1,7 +1,7 @@
 import { Signin } from "@/backend/services/auth/signin";
 import { NextResponse } from "next/server";
 
-export const signinnCtrl = async (req: Request) => {
+export const signinCtrl = async (req: Request) => {
   try {
      const {email,password} = await req.json()
      const data = await Signin(email,password)

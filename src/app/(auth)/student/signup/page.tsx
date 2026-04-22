@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { FetchAPI } from "@/redux/fetch/fetchApi";
+import { FetchAPI } from "@/redux/fetchApi";
 import { clearApiState } from "@/redux/apiSlice";
 import { Step2 } from "@/components/auth/signup/Step2";
 import { Step3 } from "@/components/auth/signup/Step3";

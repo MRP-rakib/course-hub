@@ -9,13 +9,14 @@ interface ApiProps {
 
 export const FetchAPI = createAsyncThunk(
   "api/fetch",
-  async ({ body, endpoint, headers, method = "GET" }: ApiProps, { rejectWithValue }) => {
+  async ({ body, endpoint, headers,method = "GET" }: ApiProps, { rejectWithValue }) => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10_000);
 
     try {
       const res = await fetch(endpoint, {
         method,
+        credentials:'include',
         headers: {
           "Content-Type": "application/json",
           ...headers,
