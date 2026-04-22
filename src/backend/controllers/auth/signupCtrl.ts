@@ -18,8 +18,8 @@ export const signupCtrl = async (req: Request,role:string) => {
     console.error(error);
     const err = error as Error;
     return Response.json(
-      { success: false, message: err.message || "Internal server error" },
-      { status: 500 },
+      { success: false, error: err.message || "something went wrong" },
+      { status: 400 },
     );
   }
 };

@@ -1,41 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { FetchAPI } from "@/redux/fetch/fetchApi";
+import { Check, TriangleAlert } from "lucide-react";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const {loading} = useAppSelector(state=>state.api)
+ const dispatch=useAppDispatch()
+  const {loading,error,message} = useAppSelector(state=>state.api)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!form.email || !form.password) {
-  //     setError("Please fill all fields");
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   try {
-  //     // TODO: replace with real API auth; on success use session + httpOnly cookie
-  //     const email = form.email.trim();
-  //     signIn({ email, name: displayNameFromEmail(email) });
-  //     const next =
-  //       typeof window !== "undefined"
-  //         ? new URLSearchParams(window.location.search).get("next") || "/"
-  //         : "/";
-  //     router.push(next);
-  //     router.refresh();
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
+     e.preventDefault()
+   await dispatch(
+      FetchAPI({
+        endpoint:'/api/auth/signin',
+        method:'POST',
+        body:{
+          email:form.email,
+          password:form.password
+        }
+      })
+    )
+}
   return (
     <div className="relative min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-12 overflow-hidden">
       <div className="fixed -top-25 -left-25 w-125 h-125 rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />
@@ -83,13 +75,24 @@ export default function LoginPage() {
               className="mb-6 flex items-start gap-2 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200"
             >
               <span className="shrink-0" aria-hidden>
-                ⚠
+                <TriangleAlert/>
               </span>
-              <span>{error}</span>
+              <span className=" capitalize">{error}</span>
+            </div>
+          )}
+          {message && (
+            <div
+              role="alert"
+              className="mb-6 flex items-start gap-2 rounded-xl border border-green-500/25 bg-green-500/10 px-4 py-3 text-sm text-green-200"
+            >
+              <span className="shrink-0" aria-hidden>
+                <Check/>
+              </span>
+              <span className=" capitalize">{message}</span>
             </div>
           )}
 
-          <form className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <InputField
               variant="dark"
               label="Email"

@@ -13,7 +13,6 @@ export const UserSchema = z.object({
     .max(50, "Full name must be under 50 characters"),
 
   email: z
-    .string()
     .email("Invalid email format"),
 
   password: z

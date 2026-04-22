@@ -2,27 +2,32 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import InputField from "@/components/ui/InputField";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { FetchAPI } from "@/redux/fetch/fetchApi";
+import { clearApiState } from "@/redux/apiSlice";
+import { Step2 } from "@/components/auth/signup/Step2";
+import { Step3 } from "@/components/auth/signup/Step3";
+import Step1 from "@/components/auth/signup/Step1";
 import { useRouter } from "next/navigation";
+
+
 
 export default function SignupPage() {
   const api = useAppSelector((state) => state.api);
-  const route = useRouter()
   const dispatch = useAppDispatch();
+  const route = useRouter()
   const [step, setStep] = useState(1);
-  const [storeData,setStoreData] = useState({
+  const [storeData, setStoreData] = useState({
     username: "",
     fullname: "",
     email: "",
-  })
+  });
 
   const [form, setForm] = useState({
     username: "",
     fullname: "",
     email: "",
-    code:'',
+    code: "",
     password: "",
     confirmPassword: "",
   });
@@ -46,27 +51,24 @@ export default function SignupPage() {
         FetchAPI({
           endpoint: "/api/auth/check-user",
           method: "POST",
-          body: {
-            username: form.username,
-            email: form.email,
-          },
-        })
+          body: { username: form.username, email: form.email },
+        }),
       ).unwrap();
       setStoreData({
-        username:form.username,
-        fullname:form.fullname,
-        email:form.email
-      })
-     
-      
+        username: form.username,
+        fullname: form.fullname,
+        email: form.email,
+      });
+      dispatch(
+        clearApiState()
+      )
       setStep(2);
     } catch (error) {
-      const err = error as string;
-      setError(err);
+      setError(error as string);
     }
   };
 
-  const verifyCode =async () => {
+  const verifyCode = async () => {
     if (!form.code) {
       setError("Enter verification code");
       return;
@@ -76,25 +78,19 @@ export default function SignupPage() {
         FetchAPI({
           endpoint: "/api/auth/verifycode",
           method: "POST",
-          body: {
-            email: storeData.email,
-            code:form.code
-          },
-        })
+          body: { email: storeData.email, code: form.code },
+        }),
       ).unwrap();
-     
-      
-        setStep(3);
-      
-      
+       dispatch(
+        clearApiState()
+      )
+      setStep(3);
     } catch (error) {
-      const err = error as string;
-      setError(err);
+      setError(error as string);
     }
   };
- 
- 
-  const handleSubmit =async (e: React.SubmitEvent) => {
+
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.password || !form.confirmPassword) {
       setError("Password required");
@@ -104,35 +100,48 @@ export default function SignupPage() {
       setError("Passwords do not match");
       return;
     }
-     try {
+    try {
       await dispatch(
         FetchAPI({
-          endpoint: "/api/auth/signup",
+          endpoint: "/api/auth/signup/student",
           method: "POST",
           body: {
             email: storeData.email,
-            fullname:storeData.fullname,
-            username:storeData.username,
-            password:form.password
+            fullname: storeData.fullname,
+            username: storeData.username,
+            password: form.password,
           },
-        })
+        }),
       ).unwrap();
-     
-     setSuccess(api.data?.message||'account create done 2')
-      
-      
+      setSuccess(api.message || "Account created successfully!");
+       dispatch(
+        clearApiState()
+      )
+      setStoreData({
+        fullname:'',
+        username:'',
+        email:'',
+      })
+      setForm({
+        fullname:'',
+        username:'',
+        email:'',
+        password:'',
+        confirmPassword:'',
+        code:''
+      })
+      setTimeout(() => {
+        route.replace('/signin')
+      }, 1000);
     } catch (error) {
-      const err = error as string;
-      setError(err);
+      setError(error as string);
     }
   };
 
   const steps = ["Details", "Verify", "Password"];
-  
 
   return (
     <div className="relative min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-12 overflow-hidden">
-      {/* Orbs — match join page */}
       <div className="fixed -top-25 -left-25 w-125 h-125 rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />
       <div className="fixed -bottom-20 -right-20 w-100 h-100 rounded-full bg-pink-500 opacity-[0.18] blur-[80px] pointer-events-none" />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-75 h-75 rounded-full bg-cyan-400 opacity-[0.18] blur-[80px] pointer-events-none" />
@@ -180,37 +189,34 @@ export default function SignupPage() {
               const isActive = step === idx;
               const isDone = step > idx;
               return (
-                <div key={label} className="flex flex-1 items-center min-w-0 last:flex-none">
+                <div
+                  key={label}
+                  className="flex flex-1 items-center min-w-0 last:flex-none"
+                >
                   <div className="flex flex-col items-center gap-2 w-full min-w-0">
                     <div
-                      className={`
-                        flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-xs font-bold font-display transition-colors
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-xs font-bold font-display transition-colors
                         ${
                           isActive
                             ? "border-violet-500/40 bg-violet-500/20 text-violet-300"
                             : isDone
                               ? "border-emerald-500/35 bg-emerald-500/15 text-emerald-400"
                               : "border-white/8 bg-white/3 text-white/30"
-                        }
-                      `}
+                        }`}
                     >
                       {isDone ? "✓" : idx}
                     </div>
                     <span
-                      className={`
-                        text-[10px] sm:text-xs font-medium uppercase tracking-wide truncate max-w-full text-center
-                        ${isActive ? "text-violet-400" : isDone ? "text-white/45" : "text-white/25"}
-                      `}
+                      className={`text-[10px] sm:text-xs font-medium uppercase tracking-wide truncate max-w-full text-center
+                        ${isActive ? "text-violet-400" : isDone ? "text-white/45" : "text-white/25"}`}
                     >
                       {label}
                     </span>
                   </div>
                   {i < steps.length - 1 && (
                     <div
-                      className={`
-                        h-px flex-1 mx-1 sm:mx-2 mt-4.5 min-w-2 transition-colors
-                        ${isDone ? "bg-linear-to-r from-emerald-500/40 to-violet-500/30" : "bg-white/6"}
-                      `}
+                      className={`h-px flex-1 mx-1 sm:mx-2 mt-4.5 min-w-2 transition-colors
+                        ${isDone ? "bg-linear-to-r from-emerald-500/40 to-violet-500/30" : "bg-white/6"}`}
                     />
                   )}
                 </div>
@@ -218,7 +224,7 @@ export default function SignupPage() {
             })}
           </div>
 
-          {error && (
+          {(error || api.error) && (
             <div
               role="alert"
               className="mb-6 flex items-start gap-2 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200"
@@ -226,10 +232,11 @@ export default function SignupPage() {
               <span className="shrink-0" aria-hidden>
                 ⚠
               </span>
-              <span>{error}</span>
+              <span>{error || api.error}</span>
             </div>
           )}
-          {success && (
+
+          {(success || api.message) && (
             <div
               role="status"
               className="mb-6 flex items-start gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200"
@@ -237,117 +244,19 @@ export default function SignupPage() {
               <span className="shrink-0" aria-hidden>
                 ✓
               </span>
-              <span>{success}</span>
+              <span>{success || api.message}</span>
             </div>
           )}
-
           {step === 1 && (
-            <div className="space-y-5">
-              <InputField
-                variant="dark"
-                label="Username"
-                name="username"
-                value={form.username}
-                onChange={handleChange}
-              />
-              <InputField
-                variant="dark"
-                label="Full Name"
-                name="fullname"
-                value={form.fullname}
-                onChange={handleChange}
-              />
-              <InputField
-                variant="dark"
-                label="Email"
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-              />
-              <button
-                type="button"
-                onClick={nextStep1}
-                disabled={api.loading}
-                className="relative mt-2 w-full overflow-hidden rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
-              >
-                {api.loading ? (
-                  <span className="inline-flex gap-1">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse" />
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse [animation-delay:150ms]" />
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-white/80 animate-pulse [animation-delay:300ms]" />
-                  </span>
-                ) : (
-                  "Send verification code →"
-                )}
-              </button>
-            </div>
+            <Step1 form={form}handleChange={handleChange}api={api} nextStep1={nextStep1}/>
           )}
 
           {step === 2 && (
-            <div className="space-y-5">
-              <div>
-                <InputField
-                  variant="dark"
-                  label="Verification code"
-                  name="code"
-                  value={form.code}
-                  onChange={handleChange}
-                  placeholder="000000"
-                />
-                <p className="mt-2 text-xs text-white/30">
-                  Check your email for a 6-digit code
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={verifyCode}
-                className="w-full rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99]"
-              >
-                Verify code →
-              </button>
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="w-full rounded-lg border border-white/8 bg-white/4 px-4 py-3 text-sm font-medium text-white/60 transition-colors hover:border-white/12 hover:bg-white/6 hover:text-white/90"
-              >
-                ← Back
-              </button>
-            </div>
+            <Step2 form={form}handleChange={handleChange} api={api} verifyCode={verifyCode} setStep={setStep}/>
           )}
 
           {step === 3 && (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <InputField
-                variant="dark"
-                label="Password"
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-              />
-              <InputField
-                variant="dark"
-                label="Confirm password"
-                name="confirmPassword"
-                type="password"
-                value={form.confirmPassword}
-                onChange={handleChange}
-              />
-              <button
-                type="submit"
-                className="mt-2 w-full rounded-lg bg-linear-to-r from-violet-600 to-emerald-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99]"
-              >
-                Create account →
-              </button>
-              <button
-                type="button"
-                onClick={() => setStep(2)}
-                className="w-full rounded-lg border border-white/8 bg-white/4 px-4 py-3 text-sm font-medium text-white/60 transition-colors hover:border-white/12 hover:bg-white/6 hover:text-white/90"
-              >
-                ← Back
-              </button>
-            </form>
+            <Step3 form={form} handleChange={handleChange} handleSubmit={handleSubmit} setStep={setStep} api={api}/>
           )}
 
           <p className="mt-8 text-center text-xs text-white/25">

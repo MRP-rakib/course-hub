@@ -1,20 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { FetchAPI } from "@/redux/fetch/fetchApi";
 
-interface ApiData {
-  message?: string;
-  token?: string;
-  data?: Record<string, unknown> | null;
-}
-
 interface ApiState {
-  data: ApiData | null;
+  message: string | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: ApiState = {
-  data: null,
+  message: null,
   loading: false,
   error: null,
 };
@@ -24,7 +18,7 @@ const apiSlice = createSlice({
   initialState,
   reducers: {
     clearApiState: (state) => {
-      state.data = null;
+      state.message = null;
       state.error = null;
       state.loading = false;
     },
@@ -34,16 +28,12 @@ const apiSlice = createSlice({
       .addCase(FetchAPI.pending, (state) => {
         state.loading = true;
         state.error = null;
-        state.data = null;
+        state.message = null;
       })
 
       .addCase(FetchAPI.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = {
-          message: action.payload?.message,
-          token: action.payload?.token,
-          data: action.payload?.data ?? null,
-        };
+        state.message = action.payload.message;
       })
 
       .addCase(FetchAPI.rejected, (state, action) => {
@@ -51,7 +41,7 @@ const apiSlice = createSlice({
         state.error =
           typeof action.payload === "string"
             ? action.payload
-            : action.error.message ?? "Something went wrong";
+            : (action.error.message ?? "Something went wrong");
       });
   },
 });
