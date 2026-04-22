@@ -17,7 +17,6 @@ function Navbar() {
   const [menu, setMenu] = useState<boolean>(false);
   const {user} =useAppSelector(state=>state.auth)
   const pathname = usePathname();
-console.log('user:',user);
 
   return (
     <>

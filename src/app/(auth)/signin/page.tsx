@@ -10,7 +10,7 @@ import { setToken } from "@/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "rakib@example.com", password: "a123456A" });
  const dispatch=useAppDispatch()
   const {loading,error,message} = useAppSelector(state=>state.api)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
