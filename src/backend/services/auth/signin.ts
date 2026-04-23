@@ -10,7 +10,7 @@ export const Signin= async(email:string,password:string)=>{
         throw new Error('user does not exists pleace signup')
        }
        const checkpass = await bcrypt.compare(password,user.password)
-
+       
        if(!checkpass){
         throw new Error("wrong password ")
        }
