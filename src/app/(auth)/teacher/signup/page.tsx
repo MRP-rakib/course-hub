@@ -103,7 +103,7 @@ export default function SignupPage() {
     try {
       await dispatch(
         FetchAPI({
-          endpoint: "/api/auth/signup/student",
+          endpoint: "/api/auth/signup/teacher",
           method: "POST",
           body: {
             email: storeData.email,
@@ -167,7 +167,7 @@ export default function SignupPage() {
 
         <div className="text-center mb-8">
           <div className="inline-block mb-5 rounded-full border border-violet-500/25 bg-violet-500/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-widest text-violet-400">
-            Student signup
+            instructor signup
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-2">
             Create your{" "}

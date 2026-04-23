@@ -15,7 +15,7 @@ export const Signin= async(email:string,password:string)=>{
         throw new Error("wrong password ")
        }
     const accessToken =jwt.sign({userId:user.id},process.env.accessToken!,{expiresIn:'1m'})
-    const refreshToken =jwt.sign({userId:user.id},process.env.refreshToken!,{expiresIn:'1m'})
+    const refreshToken =jwt.sign({userId:user.id},process.env.refreshToken!,{expiresIn:'2m'})
    return {message:'account login successfull',accessToken,refreshToken}
 
 }

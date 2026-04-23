@@ -15,7 +15,7 @@ export const signinCtrl = async (req: Request) => {
         name:'refreshToken',
         value:data.refreshToken,
         httpOnly:true,
-        sameSite:'lax',
+        sameSite:'none',
         path:'/',
         maxAge:60*5,
         secure:true

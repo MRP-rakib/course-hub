@@ -3,7 +3,6 @@ import dbConnect from "@/backend/lib/db";
 
  export async function POST(request: Request) {
       await dbConnect()
-      const role='teacher'
-      return signupCtrl(request,role)
+      return signupCtrl(request,'instructor')
 
 }

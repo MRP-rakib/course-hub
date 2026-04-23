@@ -21,7 +21,7 @@ export const FetchAPI = createAsyncThunk(
           "Content-Type": "application/json",
           ...headers,
         },
-        body: ["POST", "PUT", "PATCH"].includes(method)
+        body:method!=='GET'
           ? JSON.stringify(body)
           : undefined,
         signal: controller.signal,

@@ -1,5 +1,5 @@
 'use client'
-import { setUser } from '@/redux/auth/authSlice'
+import { logout, setUser } from '@/redux/auth/authSlice'
 import { FetchAPI } from '@/redux/fetchApi'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import React, { useEffect } from 'react'
@@ -19,6 +19,10 @@ function AuthProvider({children}:{children:React.ReactNode}) {
             )
             if(FetchAPI.fulfilled.match(result)){
                 dispatch(setUser(result.payload.data??result.payload))
+            }
+            if(FetchAPI.rejected.match(result)){
+                dispatch(setUser(null))
+                dispatch(logout())
             }
         }
         getUser()

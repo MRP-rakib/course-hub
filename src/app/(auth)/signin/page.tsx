@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -8,9 +8,10 @@ import { FetchAPI } from "@/redux/fetchApi";
 import { Check, TriangleAlert } from "lucide-react";
 import { setToken } from "@/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
+// import { clearApiState } from "@/redux/apiSlice";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: "rakib@example.com", password: "a123456A" });
+  const [form, setForm] = useState({ email: "rakib@example.com", password: "123456aA" });
  const dispatch=useAppDispatch()
   const {loading,error,message} = useAppSelector(state=>state.api)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,9 +39,15 @@ const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
       
       dispatch(setToken(token))
     }
-route.replace('/')
-
 }
+
+console.log(error);
+
+ useEffect(()=>{
+  if(message){
+    route.replace('/')
+  }
+ },[message,route])
 
 
   return (

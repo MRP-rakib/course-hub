@@ -62,7 +62,9 @@ export default function SignupPage() {
       dispatch(
         clearApiState()
       )
+    
       setStep(2);
+     
     } catch (error) {
       setError(error as string);
     }
@@ -84,7 +86,9 @@ export default function SignupPage() {
        dispatch(
         clearApiState()
       )
-      setStep(3);
+     
+        setStep(3);
+      
     } catch (error) {
       setError(error as string);
     }
@@ -114,9 +118,6 @@ export default function SignupPage() {
         }),
       ).unwrap();
       setSuccess(api.message || "Account created successfully!");
-       dispatch(
-        clearApiState()
-      )
       setStoreData({
         fullname:'',
         username:'',
@@ -130,12 +131,17 @@ export default function SignupPage() {
         confirmPassword:'',
         code:''
       })
-      setTimeout(() => {
-        route.replace('/signin')
-      }, 1000);
+    
+
+       route.replace('/signin')
+       dispatch(
+        clearApiState()
+      )
+      
     } catch (error) {
       setError(error as string);
     }
+   
   };
 
   const steps = ["Details", "Verify", "Password"];

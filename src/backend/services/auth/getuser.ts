@@ -1,3 +1,4 @@
+import StudentModel from '@/backend/model/studentSchema'
 import UserModel from '@/backend/model/usersSchema'
 import jwt from 'jsonwebtoken'
 export const GetUser=async(token:string)=>{
@@ -7,7 +8,13 @@ export const GetUser=async(token:string)=>{
         if(!user){
             throw new Error('user not found')
         }
-        return user
+        let studentData = null
+        if(user.role === 'student'){
+            studentData=await StudentModel.findOne({userID:user._id}).lean()
+        }
+
+        const margedUser = {...user.toObject(),...(studentData||{})}
+        return margedUser
     } catch (error) {
         throw error
     }
