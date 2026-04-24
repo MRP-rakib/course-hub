@@ -1,4 +1,5 @@
 import OtpModel from "@/backend/model/otpSchema";
+import StudentModel from "@/backend/model/studentSchema";
 import UserModel from "@/backend/model/usersSchema";
 import { sendOTP } from "@/backend/utils/mail";
 import { generateOTP } from "@/backend/utils/otp";
@@ -10,7 +11,7 @@ interface userDataType {
 
 export const CheckUser = async (userData: userDataType) => {
   const { username, email } = userData;
-  const existingUsername = await UserModel.findOne({username})
+  const existingUsername = await StudentModel.findOne({username})
 
   if (existingUsername) {
     throw new Error("Username already exists");

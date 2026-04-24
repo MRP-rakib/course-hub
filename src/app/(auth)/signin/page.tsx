@@ -3,17 +3,18 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector} from "@/redux/hooks";
 import { FetchAPI } from "@/redux/fetchApi";
 import { Check, TriangleAlert } from "lucide-react";
 import { setToken } from "@/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
-// import { clearApiState } from "@/redux/apiSlice";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "rakib@example.com", password: "123456aA" });
  const dispatch=useAppDispatch()
-  const {loading,error,message} = useAppSelector(state=>state.api)
+  const {loading} = useAppSelector(state=>state.api)
+  const [Error,setError] =useState('')
+  const [success,setSuccess] = useState('')
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -34,20 +35,25 @@ const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
     
     
     if(FetchAPI.fulfilled.match(result)){
-      const token = result.payload.token as string
-      console.log('token',token);
-      
+      const token = result.payload.token as string 
       dispatch(setToken(token))
+      console.log('result:',result);
+      
+      setSuccess(result.payload.message as string)
+    }
+    if(FetchAPI.rejected.match(result)){
+      setError(result.payload as string)
+      console.log('result:',result);
+      
     }
 }
-
-console.log(error);
+console.log('success:',success);
 
  useEffect(()=>{
-  if(message){
+  if(success){
     route.replace('/')
   }
- },[message,route])
+ },[success,route])
 
 
   return (
@@ -91,7 +97,7 @@ console.log(error);
         <div className="relative rounded-2xl border border-white/8 bg-white/4 p-8 sm:p-9 backdrop-blur-sm overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
           <div className="absolute top-0 left-[12%] right-[12%] h-px bg-linear-to-r from-transparent via-violet-500/45 to-transparent" />
 
-          {error && (
+          {Error && (
             <div
               role="alert"
               className="mb-6 flex items-start gap-2 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200"
@@ -99,10 +105,10 @@ console.log(error);
               <span className="shrink-0" aria-hidden>
                 <TriangleAlert/>
               </span>
-              <span className=" capitalize">{error}</span>
+              <span className=" capitalize">{Error}</span>
             </div>
           )}
-          {message && (
+          {success && (
             <div
               role="alert"
               className="mb-6 flex items-start gap-2 rounded-xl border border-green-500/25 bg-green-500/10 px-4 py-3 text-sm text-green-200"
@@ -110,7 +116,7 @@ console.log(error);
               <span className="shrink-0" aria-hidden>
                 <Check/>
               </span>
-              <span className=" capitalize">{message}</span>
+              <span className=" capitalize">{success}</span>
             </div>
           )}
 

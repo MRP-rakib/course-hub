@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/auth/authSlice";
+import { FetchAPI } from "@/redux/fetchApi";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
@@ -21,7 +22,17 @@ export default function ProfileDropdown() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
+const Logout=async()=>{
+  const result =await dispatch(
+    FetchAPI({
+      endpoint:'api/auth/logout',
+      method:'POST'
+    })
+  )
+  if(FetchAPI.fulfilled.match(result)){
+    dispatch(logout())
+  }
+}
   return (
     <div ref={ref} className="relative">
       {/* Avatar Button */}
@@ -78,7 +89,7 @@ export default function ProfileDropdown() {
           {/* Logout */}
           <div className="p-2 border-t border-white/6">
             <button
-              onClick={() => { dispatch(logout()); setOpen(false); }}
+              onClick={Logout}
               className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/10"
             >
               <LogOut size={15} />

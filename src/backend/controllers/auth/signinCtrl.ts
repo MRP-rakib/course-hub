@@ -17,7 +17,7 @@ export const signinCtrl = async (req: Request) => {
         httpOnly:true,
         sameSite:'none',
         path:'/',
-        maxAge:60*5,
+        maxAge:60*60*24*30,
         secure:true
     })
     return res

@@ -7,23 +7,23 @@ interface FormType {
   confirmPassword:string
 }
 
-interface ApiType {
-  loading: boolean;
-}
+// interface ApiType {
+//   loading: boolean;
+// }
 
 export interface StepType1 {
   form: FormType;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   nextStep1: () => void;
-  api: ApiType;
+  loading: boolean;
 }
 export interface StepType2 {
   form: FormType;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setStep: (step:number) => void;
-
+nextStep1:()=>void
   verifyCode?: () => void;
-  api: ApiType;
+  loading: boolean;
 }
 export interface StepType3 {
   form: FormType;
@@ -31,5 +31,5 @@ export interface StepType3 {
   setStep: (step:number) => void;
   handleSubmit:(e: React.SubmitEvent<HTMLFormElement>) => void | Promise<void>
   verifyCode?: () => void;
-  api: ApiType;
+  loading: boolean;
 }

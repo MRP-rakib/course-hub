@@ -4,24 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { FetchAPI } from "@/redux/fetchApi";
-import { clearApiState } from "@/redux/apiSlice";
 import { Step2 } from "@/components/auth/signup/Step2";
 import { Step3 } from "@/components/auth/signup/Step3";
 import Step1 from "@/components/auth/signup/Step1";
 import { useRouter } from "next/navigation";
 
-
-
 export default function SignupPage() {
-  const api = useAppSelector((state) => state.api);
+  const { loading } = useAppSelector((state) => state.api);
   const dispatch = useAppDispatch();
-  const route = useRouter()
+  const route = useRouter();
   const [step, setStep] = useState(1);
-  const [storeData, setStoreData] = useState({
-    username: "",
-    fullname: "",
-    email: "",
-  });
+ 
 
   const [form, setForm] = useState({
     username: "",
@@ -46,28 +39,23 @@ export default function SignupPage() {
       setError("Please fill all fields");
       return;
     }
-    try {
-      await dispatch(
-        FetchAPI({
-          endpoint: "/api/auth/check-user",
-          method: "POST",
-          body: { username: form.username, email: form.email },
-        }),
-      ).unwrap();
-      setStoreData({
-        username: form.username,
-        fullname: form.fullname,
-        email: form.email,
-      });
-      dispatch(
-        clearApiState()
-      )
-    
+    const result = await dispatch(
+      FetchAPI({
+        endpoint: "/api/auth/check-user",
+        method: "POST",
+        body: { username: form.username, email: form.email },
+      }),
+    );
+    if (FetchAPI.fulfilled.match(result)) {
+      setError('')
+      setSuccess(result.payload.message as string);
       setStep(2);
-     
-    } catch (error) {
-      setError(error as string);
     }
+    if (FetchAPI.rejected.match(result)) {
+      setSuccess('')
+      setError(result.payload as string);
+    }
+
   };
 
   const verifyCode = async () => {
@@ -75,23 +63,25 @@ export default function SignupPage() {
       setError("Enter verification code");
       return;
     }
-    try {
-      await dispatch(
+  
+    const verify=  await dispatch(
         FetchAPI({
           endpoint: "/api/auth/verifycode",
           method: "POST",
-          body: { email: storeData.email, code: form.code },
+          body: { email:form.email, code: form.code },
         }),
-      ).unwrap();
-       dispatch(
-        clearApiState()
       )
-     
-        setStep(3);
+      if(FetchAPI.fulfilled.match(verify)){
+        setError('')
+        setSuccess(verify.payload.message as string)
+         setStep(3);
+      }
+      if(FetchAPI.rejected.match(verify)){
+        setSuccess('')
+         setError(verify.payload as string)
+      }
       
-    } catch (error) {
-      setError(error as string);
-    }
+
   };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -104,44 +94,36 @@ export default function SignupPage() {
       setError("Passwords do not match");
       return;
     }
-    try {
-      await dispatch(
+    const signup= await dispatch(
         FetchAPI({
           endpoint: "/api/auth/signup/student",
           method: "POST",
           body: {
-            email: storeData.email,
-            fullname: storeData.fullname,
-            username: storeData.username,
+            email: form.email,
+            fullname: form.fullname,
+            username: form.username,
             password: form.password,
           },
         }),
-      ).unwrap();
-      setSuccess(api.message || "Account created successfully!");
-      setStoreData({
-        fullname:'',
-        username:'',
-        email:'',
-      })
-      setForm({
-        fullname:'',
-        username:'',
-        email:'',
-        password:'',
-        confirmPassword:'',
-        code:''
-      })
-    
-
-       route.replace('/signin')
-       dispatch(
-        clearApiState()
       )
-      
-    } catch (error) {
-      setError(error as string);
-    }
-   
+      if(FetchAPI.fulfilled.match(signup)){
+        setError('')
+         setSuccess(signup.payload.message as string);
+      setForm({
+        fullname: "",
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        code: "",
+      });
+      route.replace("/signin");
+      }
+     if(FetchAPI.rejected.match(signup)){
+      setSuccess('')
+      setError(signup.payload as string)
+     }
+    
   };
 
   const steps = ["Details", "Verify", "Password"];
@@ -230,7 +212,7 @@ export default function SignupPage() {
             })}
           </div>
 
-          {(error || api.error) && (
+          {error && (
             <div
               role="alert"
               className="mb-6 flex items-start gap-2 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200"
@@ -238,11 +220,11 @@ export default function SignupPage() {
               <span className="shrink-0" aria-hidden>
                 ⚠
               </span>
-              <span>{error || api.error}</span>
+              <span>{error}</span>
             </div>
           )}
 
-          {(success || api.message) && (
+          {success && (
             <div
               role="status"
               className="mb-6 flex items-start gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200"
@@ -250,19 +232,37 @@ export default function SignupPage() {
               <span className="shrink-0" aria-hidden>
                 ✓
               </span>
-              <span>{success || api.message}</span>
+              <span>{success}</span>
             </div>
           )}
           {step === 1 && (
-            <Step1 form={form}handleChange={handleChange}api={api} nextStep1={nextStep1}/>
+            <Step1
+              form={form}
+              handleChange={handleChange}
+              loading={loading}
+              nextStep1={nextStep1}
+            />
           )}
 
           {step === 2 && (
-            <Step2 form={form}handleChange={handleChange} api={api} verifyCode={verifyCode} setStep={setStep}/>
+            <Step2
+              form={form}
+              handleChange={handleChange}
+              verifyCode={verifyCode}
+              loading={loading}
+              setStep={setStep}
+              nextStep1={nextStep1}
+            />
           )}
 
           {step === 3 && (
-            <Step3 form={form} handleChange={handleChange} handleSubmit={handleSubmit} setStep={setStep} api={api}/>
+            <Step3
+              form={form}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              loading={loading}
+              setStep={setStep}
+            />
           )}
 
           <p className="mt-8 text-center text-xs text-white/25">

@@ -2,7 +2,7 @@ import InputField from '@/components/ui/InputField'
 import { StepType2 } from '@/types/auth'
 import { LoadingDots } from '../LoadingDots'
 
-export function Step2({form,handleChange,setStep,verifyCode,api}:StepType2) {
+export function Step2({form,handleChange,setStep,verifyCode,nextStep1,loading}:StepType2) {
   return (
         <div className="space-y-5">
                       <div>
@@ -14,17 +14,20 @@ export function Step2({form,handleChange,setStep,verifyCode,api}:StepType2) {
                           onChange={handleChange}
                           placeholder="000000"
                         />
-                        <p className="mt-2 text-xs text-white/30">
+                        <div className='flex items-center gap-2 mt-2 text-xs text-white/30'>
+                          <p className="">
                           Check your email for a 6-digit code
                         </p>
+                        <button onClick={nextStep1} className='text-violet-400 transition-colors hover:text-violet-300text cursor-pointer'>resend</button>
+                        </div>
                       </div>
                       <button
                         type="button"
                         onClick={verifyCode}
-                        disabled={api.loading}
+                        disabled={loading}
                         className="w-full rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-4 py-3 font-display text-sm font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
                       >
-                        {api.loading ? <LoadingDots /> : "Verify code →"}
+                        {loading ? <LoadingDots /> : "Verify code →"}
                       </button>
                       <button
                         type="button"
