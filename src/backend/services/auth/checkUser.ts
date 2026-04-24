@@ -1,6 +1,5 @@
 import OtpModel from "@/backend/model/otpSchema";
 import StudentModel from "@/backend/model/studentSchema";
-import UserModel from "@/backend/model/usersSchema";
 import { sendOTP } from "@/backend/utils/mail";
 import { generateOTP } from "@/backend/utils/otp";
 
@@ -11,15 +10,16 @@ interface userDataType {
 
 export const CheckUser = async (userData: userDataType) => {
   const { username, email } = userData;
-  const existingUsername = await StudentModel.findOne({username})
 
+  try {
+    const existingUsername = await StudentModel.findOne({ username });
   if (existingUsername) {
-    throw new Error("Username already exists");
+    return {success:false,message:'username exists'}
   }
- const existingEmail = await UserModel.findOne({email})
 
+  const existingEmail = await StudentModel.findOne({ email });
   if (existingEmail) {
-    throw new Error("email already exists");
+    return{success:false,message:'email already exists'}
   }
 
   const code = generateOTP();
@@ -28,7 +28,7 @@ export const CheckUser = async (userData: userDataType) => {
 
   const otpRecord = await OtpModel.create({
     email,
-    code
+    code,
   });
 
   try {
@@ -38,5 +38,8 @@ export const CheckUser = async (userData: userDataType) => {
     throw new Error("Failed to send OTP email. Please try again.");
   }
 
-  return "OTP sent successfully";
+  return {success:true,message:'otp sent successfull'}
+  } catch (error) {
+    throw error
+  }
 };

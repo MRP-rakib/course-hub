@@ -1,20 +1,15 @@
 import StudentModel from '@/backend/model/studentSchema'
-import UserModel from '@/backend/model/usersSchema'
 import jwt from 'jsonwebtoken'
 export const GetUser=async(token:string)=>{
     try {
         const decoded = jwt.verify(token,process.env.accessToken!)as {userId:string}
-        const user = await UserModel.findById(decoded.userId).select('-password')
+        const user = await StudentModel.findById(decoded.userId).select('-password')
         if(!user){
-            throw new Error('user not found')
+            return({success:false,message:'user not found',statusCode:404})
         }
-        let studentData = null
-        if(user.role === 'student'){
-            studentData=await StudentModel.findOne({userID:user._id}).lean()
-        }
+       return {success:true,message:'user found',user:user}
 
-        const margedUser = {...user.toObject(),...(studentData||{})}
-        return margedUser
+        
     } catch (error) {
         throw error
     }

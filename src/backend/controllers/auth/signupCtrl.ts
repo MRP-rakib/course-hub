@@ -1,25 +1,29 @@
 import { Signup } from "@/backend/services/auth/signup";
-import { UserSchema } from "@/backend/validation/auth/userSchema";
-
+import {StudentSchema} from '@/backend/validation/auth/StudentSchema'
 export const signupCtrl = async (req: Request,role:string) => {
   try {
     const body = await req.json();
-    const result = UserSchema.safeParse(body);
+    const result = StudentSchema.safeParse(body);
     if (!result.success) {
       return Response.json(
-        { success: false, error: result.error.issues[0].message },
+        { success: false, message: result.error.issues[0].message },
         { status: 400 },
       );
     }
-    const message = await Signup(result.data,role);
+    const signupResult = await Signup(result.data,role);
+    if(!signupResult.success){
+      return Response.json({success:false,message:signupResult.message},{status:400})
+    }
 
-    return Response.json({ success: true, message }, { status: 200 });
+    return Response.json({ success: true, message:signupResult.message }, { status: 200 });
   } catch (error) {
-    console.error(error);
-    const err = error as Error;
+    console.error('signupCtrl error:',error);
     return Response.json(
-      { success: false, error: err.message || "something went wrong" },
-      { status: 400 },
+      {
+        success: false,
+        message: 'internal server error',
+      },
+      { status: 500 }
     );
   }
 };

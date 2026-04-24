@@ -103,7 +103,7 @@ export default function HelpContent() {
       <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0f]">
         <div className="pointer-events-none absolute right-0 top-0 h-70 w-[min(100%,520px)] rounded-full bg-violet-600/15 blur-[100px]" />
         <Container className="relative py-16 md:py-20">
-          <div className="mx-auto max-w-2xl text-center">
+          <div className="text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-xs font-semibold tracking-wide text-violet-300">
               <HelpCircle size={14} aria-hidden />
               Help center
@@ -124,7 +124,7 @@ export default function HelpContent() {
 
       <section className="border-b border-white/6 bg-[#0a0a0f] py-12 md:py-16">
         <Container>
-          <div className="mx-auto max-w-3xl">
+          <div className="">
             {sections.map((section) => (
               <div key={section.title} className="mb-12 last:mb-0">
                 <h2 className="font-display text-xl font-bold text-white">{section.title}</h2>
@@ -141,7 +141,7 @@ export default function HelpContent() {
 
       <section className="bg-[#08080c] py-12 md:py-16">
         <Container>
-          <div className="mx-auto grid max-w-4xl gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-white/8 bg-white/3 p-6">
               <div className="inline-flex rounded-lg border border-violet-500/25 bg-violet-500/10 p-2 text-violet-300">
                 <LifeBuoy size={22} aria-hidden />

@@ -8,24 +8,27 @@ export const CheckUserCtrl = async (req: Request) => {
 
     if (!result.success) {
       return Response.json(
-        { success: false, error: result.error.issues[0].message },
+        { success: false, message: result.error.issues[0].message },
         { status: 400 }      
       );
     }
 
-    const message = await CheckUser(result.data);
-
+    const servicesResult = await CheckUser(result.data);
+if(!servicesResult.success){
+  return Response.json({
+    success:false,
+    message:servicesResult.message
+  },{status:400})
+}
     return Response.json(
-      { success: true, message },
+      { success: true, message:servicesResult.message },
      { status: 200 } 
     )
   } catch (error) {
-    console.error(error);
-     const err =
-      error instanceof Error ? error.message : "something went wrong";
-    return Response.json(
-      { success: false, error: err},
-     { status: 400 } 
-    );
+    console.error('checkuserCtrl error:',error);
+   return Response.json({
+    success:false,
+    message:'internal server error',
+   },{status:500})
   }
 };

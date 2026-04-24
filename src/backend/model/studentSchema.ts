@@ -1,8 +1,10 @@
 import mongoose, { Model, Schema } from "mongoose";
 export interface Student {
-  userID: mongoose.Types.ObjectId;
   username: string;
   fullname: string;
+  email:string;
+  password:string
+  role:'admin'|'student'|'instructor'
   avatar: string;
   dateOfBirth: Date;
   mobileNumber: string;
@@ -12,12 +14,6 @@ export interface Student {
 }
 const StudentSchema = new Schema<Student>(
   {
-    userID: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-      unique: true,
-    },
     username:{
         type:String,
         required:true,
@@ -26,6 +22,23 @@ const StudentSchema = new Schema<Student>(
     fullname:{
         type:String,
         required:true,
+    },
+     email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "student", "instructor"],
+      default: "student",
     },
     mobileNumber: {
       type: String,

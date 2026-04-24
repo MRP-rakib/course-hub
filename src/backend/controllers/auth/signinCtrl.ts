@@ -4,16 +4,26 @@ import { NextResponse } from "next/server";
 export const signinCtrl = async (req: Request) => {
   try {
      const {email,password} = await req.json()
-     const data = await Signin(email,password)
-    
+     if(!email||!password){
+      return Response.json({
+        success:false,
+        message:'all field are required'
+      },{status:400})
+     }
+     const signinResult = await Signin(email,password)
+    if(!signinResult.success){
+      return Response.json({
+        success:false,message:signinResult.message
+      },{status:signinResult.statusCode||400})
+    }
     const res =NextResponse.json({
         success:true,
-        message:data.message,
-        token:data.accessToken
+        message:signinResult.message,
+        token:signinResult.accessToken
     },{status:200})
     res.cookies.set({
         name:'refreshToken',
-        value:data.refreshToken,
+        value:signinResult.refreshToken as string,
         httpOnly:true,
         sameSite:'none',
         path:'/',
@@ -22,11 +32,10 @@ export const signinCtrl = async (req: Request) => {
     })
     return res
   } catch (error) {
-    console.error(error);
-    const err = error as Error;
+    console.error('signinCtrl error:',error);
     return Response.json(
-      { success: false, error: err.message || "something went wrong" },
-      { status: 400 },
+      { success: false, message:'internal server error'},
+      { status: 500 },
     );
   }
 };

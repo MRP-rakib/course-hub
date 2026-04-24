@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
-import { useAppDispatch, useAppSelector} from "@/redux/hooks";
+import { useAppDispatch} from "@/redux/hooks";
 import { FetchAPI } from "@/redux/fetchApi";
 import { Check, TriangleAlert } from "lucide-react";
 import { setToken } from "@/redux/auth/authSlice";
@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "rakib@example.com", password: "123456aA" });
  const dispatch=useAppDispatch()
-  const {loading} = useAppSelector(state=>state.api)
+ const [loading,setLoading] = useState(false)
   const [Error,setError] =useState('')
   const [success,setSuccess] = useState('')
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,6 +21,7 @@ export default function LoginPage() {
  const route = useRouter()
 const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
      e.preventDefault()
+     setLoading(true)
   const result = await dispatch(
       FetchAPI({
         endpoint:'/api/auth/signin',
@@ -31,29 +32,21 @@ const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
         }
       })
     )
-
-    
-    
+    setLoading(false)
     if(FetchAPI.fulfilled.match(result)){
+      setError('')
       const token = result.payload.token as string 
       dispatch(setToken(token))
-      console.log('result:',result);
-      
       setSuccess(result.payload.message as string)
+      route.replace('/')
     }
     if(FetchAPI.rejected.match(result)){
-      setError(result.payload as string)
-      console.log('result:',result);
-      
+      setError(result.payload as string) 
+      console.log(result);
+           
     }
 }
-console.log('success:',success);
 
- useEffect(()=>{
-  if(success){
-    route.replace('/')
-  }
- },[success,route])
 
 
   return (

@@ -13,7 +13,7 @@ export async function POST() {
 
     if (!refreshToken) {
       return NextResponse.json(
-        { message: "No refresh token" },
+        {success:false,message: "No refresh token" },
         { status: 401 }
       );
     }
@@ -26,13 +26,15 @@ export async function POST() {
 
 
     return NextResponse.json({
+      success:true,message:'accesstoken succesfully genarated',
       token: newAccessToken,
     });
 
-  } catch {
+  } catch (error) {
+    console.log('refrshRoute error:',error);
     return NextResponse.json(
-      { message: "Invalid refresh token" },
-      { status: 401 }
+      {success:false ,message: "internal server error" },
+      { status: 500 }
     );
   }
 }

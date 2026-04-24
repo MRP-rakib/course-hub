@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Trophy, Clock } from "lucide-react";
+import { BookOpen, Trophy, Clock, User, Mail, Phone, MapPin, Calendar, Shield, Edit3, Check, X } from "lucide-react";
 import Container from "@/components/utils/Container";
 
 type TabType = "overview" | "edit" | "security";
@@ -20,6 +20,7 @@ interface UserType {
 
 export default function Profile() {
   const [tab, setTab] = useState<TabType>("overview");
+  const [isEditing, setIsEditing] = useState(false);
 
   const user: UserType = {
     name: "Rakib Hossain",
@@ -33,163 +34,345 @@ export default function Profile() {
     hours: 48,
   };
 
+  const completionRate = Math.round((user.completed / user.enrolled) * 100);
+
   return (
     <div className="bg-[#0a0a0f] text-white min-h-screen">
+      {/* ANIMATED BACKGROUND GRADIENTS */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-violet-600/20 blur-[120px] animate-pulse" />
+        <div className="absolute top-1/3 -left-40 h-96 w-96 rounded-full bg-purple-600/15 blur-[120px] animate-pulse delay-700" />
+        <div className="absolute bottom-0 right-1/4 h-80 w-80 rounded-full bg-pink-600/10 blur-[100px] animate-pulse delay-1000" />
+      </div>
 
-      {/* BACKGROUND GLOW */}
-      <div className="pointer-events-none absolute left-1/2 top-0 h-100 w-225 -translate-x-1/2 bg-violet-600/15 blur-[140px]" />
-
-      <Container className="relative px-4 py-14 md:py-18">
-
+      <Container className="relative px-4 py-8 md:py-12 max-w-6xl">
         {/* PROFILE HEADER CARD */}
-        <div className="rounded-2xl border border-white/8 bg-white/3 backdrop-blur-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-2xl p-8 shadow-2xl shadow-violet-900/20">
+          {/* Decorative corner accent */}
+          <div className="absolute top-0 right-0 h-40 w-40 bg-gradient-to-br from-violet-500/20 to-transparent blur-3xl" />
+          
+          <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="flex items-start gap-6">
+              {/* Avatar with ring */}
+              <div className="relative">
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 blur-lg opacity-75 animate-pulse" />
+                <div className="relative h-24 w-24 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500 flex items-center justify-center font-bold text-3xl shadow-xl">
+                  {user.name.charAt(0)}
+                </div>
+                <div className="absolute -bottom-1 -right-1 h-7 w-7 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center border-2 border-[#0a0a0f]">
+                  <Check className="h-4 w-4" />
+                </div>
+              </div>
 
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-linear-to-r from-violet-600 to-pink-500 flex items-center justify-center font-bold text-lg">
-              R
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">
+                    {user.name}
+                  </h1>
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                    {user.role}
+                  </span>
+                </div>
+                <p className="text-white/60 text-base mb-3 flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  {user.email}
+                </p>
+                <div className="flex flex-wrap gap-4 text-sm text-white/50">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="h-4 w-4 text-violet-400" />
+                    Joined {user.joined}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-violet-400" />
+                    {user.location}
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <h1 className="text-2xl font-extrabold">{user.name}</h1>
-              <p className="text-white/50 text-sm">{user.email}</p>
-              <span className="text-xs text-violet-400">{user.role}</span>
+            {/* TAB NAVIGATION */}
+            <div className="flex gap-2 bg-black/30 p-1.5 rounded-2xl border border-white/5">
+              {(["overview", "edit", "security"] as TabType[]).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={`relative px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 capitalize ${
+                    tab === t
+                      ? "text-white"
+                      : "text-white/50 hover:text-white/80"
+                  }`}
+                >
+                  {tab === t && (
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 shadow-lg shadow-violet-500/50" />
+                  )}
+                  <span className="relative flex items-center gap-2">
+                    {t === "overview" && <User className="h-4 w-4" />}
+                    {t === "edit" && <Edit3 className="h-4 w-4" />}
+                    {t === "security" && <Shield className="h-4 w-4" />}
+                    {t}
+                  </span>
+                </button>
+              ))}
             </div>
-          </div>
-
-          {/* TABS */}
-          <div className="flex gap-2">
-            {(["overview", "edit", "security"] as TabType[]).map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`px-4 py-2 rounded-xl text-sm border transition ${
-                  tab === t
-                    ? "bg-white/10 border-white/20 text-violet-400"
-                    : "border-white/10 text-white/50 hover:text-white"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
           </div>
         </div>
 
         {/* STATS SECTION */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-
-          <Stat icon={<BookOpen className="text-violet-400" />} value={user.enrolled} label="Courses" />
-          <Stat icon={<Trophy className="text-pink-400" />} value={user.completed} label="Completed" />
-          <Stat icon={<Clock className="text-violet-300" />} value={`${user.hours}h`} label="Learning Time" />
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          <StatCard
+            icon={<BookOpen className="h-6 w-6" />}
+            value={user.enrolled}
+            label="Courses Enrolled"
+            color="violet"
+          />
+          <StatCard
+            icon={<Trophy className="h-6 w-6" />}
+            value={user.completed}
+            label="Completed"
+            color="pink"
+          />
+          <StatCard
+            icon={<Clock className="h-6 w-6" />}
+            value={`${user.hours}h`}
+            label="Learning Time"
+            color="purple"
+          />
+          <StatCard
+            icon={<div className="text-2xl font-bold">{completionRate}%</div>}
+            value=""
+            label="Completion Rate"
+            color="emerald"
+            customValue={
+              <div className="w-full bg-white/10 rounded-full h-2 mt-2 overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-1000"
+                  style={{ width: `${completionRate}%` }}
+                />
+              </div>
+            }
+          />
         </div>
 
-        {/* MAIN CARD */}
-        <div className="mt-6 rounded-2xl border border-white/8 bg-white/3 backdrop-blur-xl p-6">
-
-          {/* OVERVIEW */}
+        {/* MAIN CONTENT CARD */}
+        <div className="mt-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-2xl p-8 shadow-2xl shadow-violet-900/10">
+          {/* OVERVIEW TAB */}
           {tab === "overview" && (
-            <div className="grid md:grid-cols-2 gap-10">
+            <div className="space-y-8">
+              <div className="grid md:grid-cols-2 gap-8">
+                <InfoSection title="Personal Information" icon={<User className="h-5 w-5" />}>
+                  <InfoRow icon={<User className="h-4 w-4" />} label="Full Name" value={user.name} />
+                  <InfoRow icon={<Mail className="h-4 w-4" />} label="Email Address" value={user.email} />
+                  <InfoRow icon={<Phone className="h-4 w-4" />} label="Phone Number" value={user.phone} />
+                  <InfoRow icon={<MapPin className="h-4 w-4" />} label="Location" value={user.location} />
+                </InfoSection>
 
-              <div>
-                <h2 className="text-violet-400 font-bold mb-4">Personal Info</h2>
-                <Info label="Name" value={user.name} />
-                <Info label="Email" value={user.email} />
-                <Info label="Phone" value={user.phone} />
-                <Info label="Location" value={user.location} />
+                <InfoSection title="Account Details" icon={<Shield className="h-5 w-5" />}>
+                  <InfoRow icon={<User className="h-4 w-4" />} label="Role" value={user.role} />
+                  <InfoRow icon={<Calendar className="h-4 w-4" />} label="Member Since" value={user.joined} />
+                  <InfoRow icon={<BookOpen className="h-4 w-4" />} label="Active Courses" value={`${user.enrolled - user.completed}`} />
+                  <InfoRow icon={<Trophy className="h-4 w-4" />} label="Achievements" value="5 Badges" />
+                </InfoSection>
               </div>
 
-              <div>
-                <h2 className="text-violet-400 font-bold mb-4">Account Info</h2>
-                <Info label="Role" value={user.role} />
-                <Info label="Joined" value={user.joined} />
+              {/* Activity Overview */}
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 border border-violet-500/20">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-violet-400" />
+                  Learning Progress
+                </h3>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-violet-400">{user.enrolled}</div>
+                    <div className="text-sm text-white/60 mt-1">Total Courses</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-pink-400">{user.completed}</div>
+                    <div className="text-sm text-white/60 mt-1">Completed</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-purple-400">{user.hours}h</div>
+                    <div className="text-sm text-white/60 mt-1">Study Time</div>
+                  </div>
+                </div>
               </div>
-
             </div>
           )}
 
-          {/* EDIT */}
+          {/* EDIT TAB */}
           {tab === "edit" && (
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold">Edit Profile</h2>
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-sm"
+                >
+                  {isEditing ? "Cancel" : "Enable Editing"}
+                </button>
+              </div>
 
-              <Input label="Name" defaultValue={user.name} />
-              <Input label="Email" defaultValue={user.email} />
-              <Input label="Phone" defaultValue={user.phone} />
-              <Input label="Location" defaultValue={user.location} />
+              <div className="grid md:grid-cols-2 gap-6">
+                <InputField label="Full Name" icon={<User className="h-4 w-4" />} defaultValue={user.name} disabled={!isEditing} />
+                <InputField label="Email Address" icon={<Mail className="h-4 w-4" />} defaultValue={user.email} disabled={!isEditing} />
+                <InputField label="Phone Number" icon={<Phone className="h-4 w-4" />} defaultValue={user.phone} disabled={!isEditing} />
+                <InputField label="Location" icon={<MapPin className="h-4 w-4" />} defaultValue={user.location} disabled={!isEditing} />
+              </div>
 
-              <button className="md:col-span-2 mt-2 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 py-3 font-bold hover:opacity-90">
-                Save Changes
-              </button>
-
+              {isEditing && (
+                <div className="flex gap-3 mt-8 pt-6 border-t border-white/10">
+                  <button className="flex-1 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 py-3.5 font-semibold hover:shadow-lg hover:shadow-violet-500/50 transition-all duration-300 flex items-center justify-center gap-2">
+                    <Check className="h-5 w-5" />
+                    Save Changes
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="px-6 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors flex items-center gap-2"
+                  >
+                    <X className="h-5 w-5" />
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
-          {/* SECURITY */}
+          {/* SECURITY TAB */}
           {tab === "security" && (
-            <div className="max-w-md space-y-4">
+            <div className="max-w-xl mx-auto space-y-6">
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold mb-2">Security Settings</h2>
+                <p className="text-white/60 text-sm">Update your password to keep your account secure</p>
+              </div>
 
-              <Input label="Current Password" type="password" />
-              <Input label="New Password" type="password" />
-              <Input label="Confirm Password" type="password" />
+              <InputField label="Current Password" type="password" icon={<Shield className="h-4 w-4" />} />
+              <InputField label="New Password" type="password" icon={<Shield className="h-4 w-4" />} />
+              <InputField label="Confirm New Password" type="password" icon={<Shield className="h-4 w-4" />} />
 
-              <button className="w-full rounded-xl bg-linear-to-r from-violet-600 to-purple-600 py-3 font-bold hover:opacity-90">
-                Update Password
-              </button>
+              <div className="pt-4">
+                <button className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 py-3.5 font-semibold hover:shadow-lg hover:shadow-violet-500/50 transition-all duration-300">
+                  Update Password
+                </button>
+              </div>
 
+              <div className="mt-8 p-4 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                <h4 className="font-semibold text-sm mb-2 text-violet-300">Password Requirements</h4>
+                <ul className="text-sm text-white/60 space-y-1">
+                  <li>• At least 8 characters long</li>
+                  <li>• Include uppercase and lowercase letters</li>
+                  <li>• Include at least one number</li>
+                  <li>• Include at least one special character</li>
+                </ul>
+              </div>
             </div>
           )}
-
         </div>
       </Container>
     </div>
   );
 }
 
-/* ===== UI BLOCKS ===== */
+/* ===== COMPONENTS ===== */
 
-function Stat({
+function StatCard({
   icon,
   value,
   label,
+  color,
+  customValue,
 }: {
   icon: React.ReactNode;
   value: string | number;
   label: string;
+  color: "violet" | "pink" | "purple" | "emerald";
+  customValue?: React.ReactNode;
+}) {
+  const colorClasses = {
+    violet: "from-violet-500/20 to-violet-600/5 border-violet-500/20 text-violet-400",
+    pink: "from-pink-500/20 to-pink-600/5 border-pink-500/20 text-pink-400",
+    purple: "from-purple-500/20 to-purple-600/5 border-purple-500/20 text-purple-400",
+    emerald: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/20 text-emerald-400",
+  };
+
+  return (
+    <div className={`rounded-2xl border bg-gradient-to-br backdrop-blur-xl p-6 hover:scale-105 transition-transform duration-300 ${colorClasses[color]}`}>
+      <div className="mb-3">{icon}</div>
+      {customValue || <h3 className="text-3xl font-bold mb-1">{value}</h3>}
+      <p className="text-white/60 text-sm font-medium">{label}</p>
+    </div>
+  );
+}
+
+function InfoSection({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-white/8 bg-white/3 backdrop-blur-xl p-5">
-      {icon}
-      <h3 className="text-2xl font-bold mt-2">{value}</h3>
-      <p className="text-white/45 text-sm">{label}</p>
+    <div>
+      <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-violet-300">
+        {icon}
+        {title}
+      </h2>
+      <div className="space-y-3">{children}</div>
     </div>
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
+function InfoRow({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+}) {
   return (
-    <div className="flex justify-between border-b border-white/6 py-2 text-sm">
-      <span className="text-white/45">{label}</span>
-      <span>{value}</span>
+    <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] transition-colors">
+      <span className="text-white/50 text-sm flex items-center gap-2">
+        <span className="text-violet-400">{icon}</span>
+        {label}
+      </span>
+      <span className="font-medium text-sm">{value}</span>
     </div>
   );
 }
 
-function Input({
+function InputField({
   label,
   type = "text",
   defaultValue,
+  icon,
+  disabled = false,
 }: {
   label: string;
   type?: string;
   defaultValue?: string;
+  icon?: React.ReactNode;
+  disabled?: boolean;
 }) {
   return (
     <div>
-      <label className="text-sm text-white/45">{label}</label>
-      <input
-        type={type}
-        defaultValue={defaultValue}
-        className="mt-1 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none focus:border-violet-500"
-      />
+      <label className="text-sm font-medium text-white/70 mb-2 block">{label}</label>
+      <div className="relative">
+        {icon && (
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-violet-400">
+            {icon}
+          </div>
+        )}
+        <input
+          type={type}
+          defaultValue={defaultValue}
+          disabled={disabled}
+          className={`w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all ${
+            icon ? "pl-11" : ""
+          } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+        />
+      </div>
     </div>
   );
 }

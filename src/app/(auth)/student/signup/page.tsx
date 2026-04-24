@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch,} from "@/redux/hooks";
 import { FetchAPI } from "@/redux/fetchApi";
 import { Step2 } from "@/components/auth/signup/Step2";
 import { Step3 } from "@/components/auth/signup/Step3";
@@ -10,7 +10,7 @@ import Step1 from "@/components/auth/signup/Step1";
 import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
-  const { loading } = useAppSelector((state) => state.api);
+ const [loading,setLoading] = useState(false)
   const dispatch = useAppDispatch();
   const route = useRouter();
   const [step, setStep] = useState(1);
@@ -39,6 +39,7 @@ export default function SignupPage() {
       setError("Please fill all fields");
       return;
     }
+    setLoading(true)
     const result = await dispatch(
       FetchAPI({
         endpoint: "/api/auth/check-user",
@@ -46,13 +47,14 @@ export default function SignupPage() {
         body: { username: form.username, email: form.email },
       }),
     );
+   setLoading(false)
     if (FetchAPI.fulfilled.match(result)) {
       setError('')
       setSuccess(result.payload.message as string);
       setStep(2);
     }
     if (FetchAPI.rejected.match(result)) {
-      setSuccess('')
+      setSuccess('')    
       setError(result.payload as string);
     }
 
@@ -63,7 +65,7 @@ export default function SignupPage() {
       setError("Enter verification code");
       return;
     }
-  
+  setLoading(true)
     const verify=  await dispatch(
         FetchAPI({
           endpoint: "/api/auth/verifycode",
@@ -71,6 +73,7 @@ export default function SignupPage() {
           body: { email:form.email, code: form.code },
         }),
       )
+      setLoading(false)
       if(FetchAPI.fulfilled.match(verify)){
         setError('')
         setSuccess(verify.payload.message as string)
@@ -86,6 +89,7 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true)
     if (!form.password || !form.confirmPassword) {
       setError("Password required");
       return;
@@ -106,6 +110,7 @@ export default function SignupPage() {
           },
         }),
       )
+      setLoading(false)
       if(FetchAPI.fulfilled.match(signup)){
         setError('')
          setSuccess(signup.payload.message as string);

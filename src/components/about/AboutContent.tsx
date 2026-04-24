@@ -58,7 +58,7 @@ export default function AboutContent() {
       <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0f]">
         <div className="pointer-events-none absolute left-1/2 top-0 h-95 w-[min(100%,880px)] -translate-x-1/2 rounded-full bg-violet-600/18 blur-[110px]" />
         <Container className="relative py-16 md:py-20 lg:py-24">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="text-center">
             <span className="inline-flex items-center rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-xs font-semibold tracking-wide text-violet-300">
               About Course Hub
             </span>
@@ -87,9 +87,9 @@ export default function AboutContent() {
                 Join the hub
               </Link>
             </div>
-          </div>
-
-          <dl className="mx-auto mt-14 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
+          
+            </div>
+          <Container className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {stats.map((item) => (
               <div
                 key={item.label}
@@ -103,7 +103,7 @@ export default function AboutContent() {
                 </dd>
               </div>
             ))}
-          </dl>
+          </Container>
           <p className="mt-4 text-center text-[11px] text-white/35">
             * Sum of enrollments across published courses on Course Hub (illustrative totals).
           </p>
@@ -112,7 +112,7 @@ export default function AboutContent() {
 
       <section className="border-b border-white/6 bg-[#0a0a0f] py-14 md:py-18">
         <Container>
-          <div className="mx-auto max-w-3xl">
+          <div className="text-center">
             <h2 className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
               Our story
             </h2>
@@ -136,7 +136,7 @@ export default function AboutContent() {
 
       <section className="border-b border-white/6 bg-[#08080c] py-14 md:py-18">
         <Container>
-          <div className="mx-auto max-w-2xl text-center">
+          <div className="text-center">
             <span className="inline-flex items-center rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-xs font-semibold tracking-wide text-violet-300">
               Mission
             </span>
@@ -149,7 +149,7 @@ export default function AboutContent() {
             </p>
           </div>
 
-          <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-white/8 bg-white/2 p-6">
               <div className="inline-flex rounded-lg border border-violet-500/25 bg-violet-500/10 p-2 text-violet-300">
                 <GraduationCap size={22} aria-hidden />
@@ -176,7 +176,7 @@ export default function AboutContent() {
 
       <section className="border-b border-white/6 bg-[#0a0a0f] py-14 md:py-18">
         <Container>
-          <div className="mx-auto max-w-2xl text-center">
+          <div className="text-center">
             <h2 className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
               What we stand for
             </h2>
@@ -185,7 +185,7 @@ export default function AboutContent() {
             </p>
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {values.map(({ title, body, icon: Icon }) => (
               <article
                 key={title}
@@ -202,7 +202,7 @@ export default function AboutContent() {
 
       <section className="bg-[#08080c] py-14 md:py-18">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-2xl border border-violet-500/25 bg-linear-to-br from-violet-600/15 to-purple-600/10 px-6 py-10 text-center md:px-10">
+          <div className="rounded-2xl border border-violet-500/25 bg-linear-to-br from-violet-600/15 to-purple-600/10 px-6 py-10 text-center md:px-10">
             <h2 className="font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
               Ready to start?
             </h2>

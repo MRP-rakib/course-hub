@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GraduationCap } from "lucide-react";
+import Container from "../utils/Container";
 
 const footerLink =
   "text-sm text-white/40 transition-colors duration-200 hover:text-violet-300";
@@ -17,7 +18,7 @@ export default function Footer() {
     <footer className="relative mt-auto border-t border-white/[0.07] bg-[#0a0a0f] overflow-hidden">
       <div className="pointer-events-none absolute bottom-0 left-1/2 h-70 w-[min(100%,720px)] -translate-x-1/2 translate-y-1/2 rounded-full bg-violet-600/10 blur-[100px]" />
 
-      <div className="relative mx-auto max-w-6xl px-6 py-14 lg:py-16">
+      <Container className="relative px-6 py-14 lg:py-16">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
@@ -131,7 +132,7 @@ export default function Footer() {
           </p>
           <p className="text-xs text-white/20">Built for learners everywhere.</p>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }
