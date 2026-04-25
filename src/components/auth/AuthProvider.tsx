@@ -7,7 +7,7 @@ import React, { useEffect } from 'react'
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch()
-  const {token,error} = useAppSelector(state=>state.auth) 
+  const {token} = useAppSelector(state=>state.auth) 
   useEffect(() => {
    const initAuth = async () => {
     if(token){
@@ -41,20 +41,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const newToken = refresh.payload.token
       dispatch(setToken(newToken))
-      const user = await dispatch(
-        FetchAPI({
-          endpoint: 'api/auth/getuser',
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${newToken}`,
-          },
-        })
-      )
-
-      if (FetchAPI.fulfilled.match(user)) {
-        dispatch(setUser(user.payload.data))
-        
-      }
      }
     }
 

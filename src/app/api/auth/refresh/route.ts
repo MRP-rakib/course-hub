@@ -22,7 +22,7 @@ export async function POST() {
       process.env.refreshToken!
     ) as DecodedRefreshToken;
 
-    const newAccessToken = jwt.sign({userId:decoded.userId},process.env.accessToken!,{expiresIn:'10m'})
+    const newAccessToken = jwt.sign({userId:decoded.userId,role:decoded.role},process.env.accessToken!,{expiresIn:'10m'})
 
 
     return NextResponse.json({

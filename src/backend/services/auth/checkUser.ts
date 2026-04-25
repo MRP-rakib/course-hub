@@ -1,3 +1,4 @@
+import InstructorModel from "@/backend/model/instructorSchema";
 import OtpModel from "@/backend/model/otpSchema";
 import StudentModel from "@/backend/model/studentSchema";
 import { sendOTP } from "@/backend/utils/mail";
@@ -12,12 +13,12 @@ export const CheckUser = async (userData: userDataType) => {
   const { username, email } = userData;
 
   try {
-    const existingUsername = await StudentModel.findOne({ username });
+    const existingUsername = await StudentModel.findOne({ username })|| await InstructorModel.findOne({username})
   if (existingUsername) {
     return {success:false,message:'username exists'}
   }
 
-  const existingEmail = await StudentModel.findOne({ email });
+  const existingEmail = await StudentModel.findOne({ email }) || await InstructorModel.findOne({email})
   if (existingEmail) {
     return{success:false,message:'email already exists'}
   }
