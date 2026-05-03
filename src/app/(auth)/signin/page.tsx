@@ -108,7 +108,6 @@ const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <InputField
-              variant="dark"
               label="Email"
               name="email"
               type="email"
@@ -118,7 +117,6 @@ const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
 
             <div>
               <InputField
-                variant="dark"
                 label="Password"
                 name="password"
                 type="password"

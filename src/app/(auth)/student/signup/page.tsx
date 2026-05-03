@@ -147,21 +147,18 @@ export default function SignupPage() {
           )}
           <form onSubmit={handleSubmit} className="space-y-5">
             <InputField
-              variant="dark"
               label="Username"
               name="username"
               value={form.username}
               onChange={handleChange}
             />
             <InputField
-              variant="dark"
               label="Full Name"
               name="fullname"
               value={form.fullname}
               onChange={handleChange}
             />
             <InputField
-              variant="dark"
               label="Email"
               name="email"
               type="email"
@@ -169,7 +166,6 @@ export default function SignupPage() {
               onChange={handleChange}
             />
             <InputField
-              variant="dark"
               label="Password"
               name="password"
               type="password"
@@ -177,7 +173,6 @@ export default function SignupPage() {
               onChange={handleChange}
             />
             <InputField
-              variant="dark"
               label="Confirm Password"
               name="cpassword"
               type="password"
