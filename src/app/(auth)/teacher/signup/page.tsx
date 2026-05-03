@@ -56,7 +56,7 @@ export default function SignupPage() {
       setError("Passwords do not match");
       return;
     }
-
+    
     const role = pathname.includes("student") ? "student" : "instructor";
 
     const { data, error } = await signup(form.email, form.password);
