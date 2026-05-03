@@ -3,15 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import InputField from "@/components/ui/InputField";
-import { useAppDispatch} from "@/redux/hooks";
-import { FetchAPI } from "@/redux/fetchApi";
 import { Check, TriangleAlert } from "lucide-react";
-import { setToken } from "@/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
+import { signin } from "@/services/auth/signin";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "rakib@example.com", password: "123456aA" });
- const dispatch=useAppDispatch()
  const [loading,setLoading] = useState(false)
   const [Error,setError] =useState('')
   const [success,setSuccess] = useState('')
@@ -22,29 +19,25 @@ export default function LoginPage() {
 const handleSubmit=async(e:React.SubmitEvent<HTMLElement>)=>{
      e.preventDefault()
      setLoading(true)
-  const result = await dispatch(
-      FetchAPI({
-        endpoint:'/api/auth/signin',
-        method:'POST',
-        body:{
-          email:form.email,
-          password:form.password
-        }
-      })
-    )
+  if(!form.email || !form.password){
     setLoading(false)
-    if(FetchAPI.fulfilled.match(result)){
-      setError('')
-      const token = result.payload.token as string 
-      dispatch(setToken(token))
-      setSuccess(result.payload.message as string)
-      route.replace('/')
-    }
-    if(FetchAPI.rejected.match(result)){
-      setError(result.payload as string) 
-      console.log(result);
-           
-    }
+    setError('all field are required')
+    setSuccess('')
+    return
+  }
+  const {data,error} = await signin(form.email,form.password)
+   if(error){
+    setLoading(false)
+    setSuccess('')
+    setError(error.message)
+    return
+   }
+   if(data){
+    setLoading(false)
+    setError('')
+    setSuccess('signin succefull')
+    route.replace('/')
+   }
 }
 
 

@@ -4,13 +4,14 @@ import { LogOut, User, BookOpen, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { logout } from "@/redux/auth/authSlice";
-import { FetchAPI } from "@/redux/fetchApi";
+import { supabase } from "@/lib/supabaseClient";
+import { setProfile, setUser } from "@/redux/auth/authSlice";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
-  const { user } = useAppSelector(state => state.auth);
-  const dispatch = useAppDispatch();
+  const { profile } = useAppSelector(state => state.auth);
+  const dispatch = useAppDispatch()
+
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,17 +23,30 @@ export default function ProfileDropdown() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-const Logout=async()=>{
-  const result =await dispatch(
-    FetchAPI({
-      endpoint:'api/auth/logout',
-      method:'POST'
-    })
-  )
-  if(FetchAPI.fulfilled.match(result)){
-    dispatch(logout())
+
+
+const Signout = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      console.error('Logout error:', error.message);
+      
+      return;
+    }
+
+    dispatch(setUser(null));
+    dispatch(setProfile(null));
+    
+  } catch (err) {
+    console.error('Unexpected logout error:', err);
+    
   }
-}
+  
+};
+
+
+
   return (
     <div ref={ref} className="relative">
       {/* Avatar Button */}
@@ -41,27 +55,26 @@ const Logout=async()=>{
         className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/4 px-2 py-1.5 transition-colors hover:bg-white/8"
       >
         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 text-xs font-bold uppercase">
-          {user?.fullname?.charAt(0)}
+          {profile?.fullname?.charAt(0)}
         </div>
-        <span className="text-xs font-medium text-white/70">{user?.fullname}</span>
+        <span className="text-xs font-medium text-white/70">{profile?.fullname}</span>
         <ChevronDown
           size={13}
           className={`text-white/40 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
-      {/* Dropdown */}
       {open && (
         <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-white/8 bg-[#0e0e16] shadow-[0_16px_48px_rgba(0,0,0,0.4)] overflow-hidden z-50">
           {/* User Info */}
           <div className="px-4 py-4 border-b border-white/6">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-400 text-sm font-bold uppercase">
-                {user?.fullname?.charAt(0)}
+                {profile?.fullname?.charAt(0)}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{user?.fullname}</p>
-                <p className="text-xs text-white/40 truncate">{user?.email}</p>
+                <p className="text-sm font-semibold text-white truncate">{profile?.fullname}</p>
+                <p className="text-xs text-white/40 truncate">{profile?.email}</p>
               </div>
             </div>
           </div>
@@ -89,8 +102,8 @@ const Logout=async()=>{
           {/* Logout */}
           <div className="p-2 border-t border-white/6">
             <button
-              onClick={Logout}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/10"
+            onClick={Signout}
+              className="flex cursor-pointer w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/10"
             >
               <LogOut size={15} />
               Logout

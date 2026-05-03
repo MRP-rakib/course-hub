@@ -50,7 +50,16 @@ function Navbar() {
               </li>
             ))}
           </ul>
-          {user?(<ProfileDropdown/>):(
+          {user?(<div className=" flex items-center gap-1">
+            <ProfileDropdown/> <button
+              type="button"
+              onClick={() => setMenu(true)}
+              aria-label="Open menu"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/60 transition-colors hover:bg-white/8 hover:text-white lg:hidden"
+            >
+              <Menu size={17} />
+            </button>
+          </div>):(
             <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/signin"

@@ -1,53 +1,30 @@
 'use client'
-
-import { setToken, setUser } from '@/redux/auth/authSlice'
-import { FetchAPI } from '@/redux/fetchApi'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { supabase } from '@/lib/supabaseClient'
+import { setProfile, setUser } from '@/redux/auth/authSlice'
+import { useAppDispatch} from '@/redux/hooks'
 import React, { useEffect } from 'react'
-
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch()
-  const {token} = useAppSelector(state=>state.auth) 
   useEffect(() => {
-   const initAuth = async () => {
-    if(token){
-       const result = await dispatch(
-        FetchAPI({
-          endpoint: 'api/auth/getuser',
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      )
-
-      if (FetchAPI.fulfilled.match(result)) {
-        dispatch(setUser(result.payload.data))
-        return
-        
+  const {data:listener}=supabase.auth.onAuthStateChange( async(event,session)=>{
+    console.log('auth event:',event)
+    if(session?.user){
+      dispatch(setUser(session.user))
+      const {data:profile}= await supabase.from('students').select('*').eq('id',session.user.id).single()
+      if(profile){
+        dispatch(setProfile(profile))
+      }else{
+        dispatch(setUser(null))
+        dispatch(setProfile(null))
       }
     }
-     if(!token){
-       const refresh = await dispatch(
-        FetchAPI({
-          endpoint: 'api/auth/refresh',
-          method: 'POST',
-        })
-      )
-
-      if (!FetchAPI.fulfilled.match(refresh)) {
-        return
-      }
-
-      const newToken = refresh.payload.token
-      dispatch(setToken(newToken))
-     }
-    }
-
-    initAuth()
     
+  })
+  return ()=>{
+    listener.subscription.unsubscribe()
+  }
  
-  }, [dispatch,token])
+  }, [dispatch])
   return <>{children}</>
 }
 

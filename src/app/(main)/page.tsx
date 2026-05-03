@@ -3,7 +3,8 @@ import FeatureCourse from '@/components/courses/FeatureCourse'
 import FeatureInstructor from '@/components/instructors/FeatureInstructor'
 import Hero from '@/components/hero/Hero'
 
-function home() {
+async function home() {
+
   return (
     <>
       <Hero />
