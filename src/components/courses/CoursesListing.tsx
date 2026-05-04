@@ -26,7 +26,6 @@ const PAGE_SIZE = 8;
 
 type ViewMode = "grid-4" | "grid-3" | "grid-2";
 type SortOption = "popular" | "newest" | "rating" | "duration";
-// type FilterCategory = "all" | "development" | "design" | "data" | "business";
 
 export default function CoursesListing() {
   const { categories } = useCategories();
@@ -38,13 +37,13 @@ export default function CoursesListing() {
   const [priceFilter, setPriceFilter] = useState<"all" | "free" | "paid">(
     "all",
   );
-  const searchParm = useSearchParams();
-  const categoryname = searchParm.get("category");
- const router = useRouter()
+  const router = useRouter()
+  const searchParams = useSearchParams();
+  const categoryname = searchParams.get("category");
+  const [selectedCategory, setSelectedCategory] = useState(categoryname||"all",)
+  
 
-  const [selectedCategory, setSelectedCategory] = useState(
-    categoryname || "all",
-  );
+  
 
   const pagedCourses = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
@@ -197,7 +196,7 @@ export default function CoursesListing() {
                           router.push(`/courses?category=${encodeURIComponent(category.name)}`)
                         }}
                         className={`px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize ${
-                          selectedCategory === category.name
+                          selectedCategory=== category.name
                             ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/30"
                             : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10"
                         }`}
