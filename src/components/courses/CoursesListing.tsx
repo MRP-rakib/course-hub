@@ -19,7 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { useCategories } from "@/redux/hooks/useCategories";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 const PAGE_SIZE = 8;
@@ -40,7 +40,7 @@ export default function CoursesListing() {
   );
   const searchParm = useSearchParams();
   const categoryname = searchParm.get("category");
-  console.log(categoryname);
+ const router = useRouter()
 
   const [selectedCategory, setSelectedCategory] = useState(
     categoryname || "all",
@@ -194,11 +194,7 @@ export default function CoursesListing() {
                         onClick={() => {
                           setSelectedCategory(category.name);
 
-                          window.history.replaceState(
-                            null,
-                            "",
-                            `/courses?category=${encodeURIComponent(category.name)}`,
-                          );
+                          router.push(`/courses?category=${encodeURIComponent(category.name)}`)
                         }}
                         className={`px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize ${
                           selectedCategory === category.name
