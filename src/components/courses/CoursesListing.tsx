@@ -39,8 +39,8 @@ export default function CoursesListing() {
   );
   const router = useRouter()
   const searchParams = useSearchParams();
-  const categoryname = searchParams.get("category");
-  const [selectedCategory, setSelectedCategory] = useState(categoryname||"all",)
+  const categoryname = searchParams.get("category")??'all'
+  const [selectedCategory, setSelectedCategory] = useState(()=>categoryname)
   
 
   
