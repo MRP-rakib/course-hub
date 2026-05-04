@@ -6,8 +6,8 @@ import { MenuItem } from "../lib/MenuItem";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Container from "../utils/Container";
-import { useAppSelector } from "@/redux/hooks";
 import ProfileDropdown from "../auth/ProfileDropdown";
+import { useAppSelector } from "@/redux/hooks/hooks";
 interface MenuPropsType {
   menu: boolean;
   setMenu: (value: boolean) => void;

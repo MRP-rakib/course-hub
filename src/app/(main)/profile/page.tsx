@@ -3,21 +3,17 @@
 import { useState } from "react";
 import { BookOpen, Trophy, User, Mail, MapPin, Calendar, Shield, Edit3, Check, X } from "lucide-react";
 import Container from "@/components/utils/Container";
-import { useAppSelector } from "@/redux/hooks";
-// import InputField from "@/components/ui/InputField";
-// import { InfoSection } from "@/components/profiles/InfoSection";
-// import { InfoRow } from "@/components/profiles/InfoRow";
 import { StatCard } from "@/components/profiles/StatCard";
 import SecurityTab from "@/components/profiles/SecurityTab";
 import EditTab from "@/components/profiles/EditTab";
 import Overview from "@/components/profiles/Overview";
+import { useAppSelector } from "@/redux/hooks/hooks";
 
 type TabType = "overview" | "edit" | "security";
 
 
 export default function Profile() {
   const [tab, setTab] = useState<TabType>("overview");
-  // const [isEditing, setIsEditing] = useState(false);
   const {profile} = useAppSelector(state=>state.auth)
 
   return (

@@ -3,9 +3,9 @@
 import { LogOut, User, BookOpen, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { supabase } from "@/lib/supabaseClient";
 import { setProfile, setUser } from "@/redux/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);

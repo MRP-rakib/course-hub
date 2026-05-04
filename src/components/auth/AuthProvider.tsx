@@ -1,7 +1,7 @@
 'use client'
 import { supabase } from '@/lib/supabaseClient'
 import { setProfile, setUser } from '@/redux/auth/authSlice'
-import { useAppDispatch } from '@/redux/hooks'
+import { useAppDispatch } from '@/redux/hooks/hooks'
 import React, { useEffect } from 'react'
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
