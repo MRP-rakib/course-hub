@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { signin } from "@/services/auth/signin";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: "rakib@example.com", password: "123456aA" });
+  const [form, setForm] = useState({ email: "rakib@example.com", password: "123456" });
  const [loading,setLoading] = useState(false)
   const [Error,setError] =useState('')
   const [success,setSuccess] = useState('')

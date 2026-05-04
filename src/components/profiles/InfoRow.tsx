@@ -2,10 +2,12 @@ export function InfoRow({
   icon,
   label,
   value,
+  classname
 }: {
   icon: React.ReactNode;
   label: string;
   value: string | number;
+  classname?:string|null
 }) {
   return (
     <div className="flex items-center justify-between p-3 rounded-xl bg-white/2 border border-white/5 hover:bg-white/2 transition-colors">
@@ -13,7 +15,7 @@ export function InfoRow({
         <span className="text-violet-400">{icon}</span>
         {label}
       </span>
-      <span className="font-medium text-sm">{value}</span>
+      <span className={`font-medium text-sm ${classname}`}>{value}</span>
     </div>
   );
 }

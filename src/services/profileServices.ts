@@ -9,7 +9,7 @@ export const createProfile = async (
   role: 'student'|'instructor'
 ) => {
   const { data, error } = await supabase
-    .from("students")
+    .from("profiles")
     .insert([
       {
         id:user.id,
@@ -22,7 +22,7 @@ export const createProfile = async (
     .select()
 
   if (error) {
-    console.error("student creation error:", error)
+    console.error("profile creation error:", error)
     return { data: null, error }
   }
 

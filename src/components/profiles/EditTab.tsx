@@ -1,6 +1,5 @@
 import {
   Calendar,
-  Link as LinkIcon,
   Mail,
   MapPin,
   Phone,
@@ -28,8 +27,6 @@ function EditTab({ profile }: EditingTabType) {
     dateOfBirth: profile?.date_of_birth
       ? new Date(profile.date_of_birth).toISOString().split("T")[0]
       : "",
-    github: profile?.github_url || "",
-    linkedin: profile?.linkedin_url || "",
     location: profile?.location || "",
   });
 
@@ -66,8 +63,6 @@ function EditTab({ profile }: EditingTabType) {
         phone: cleanValue(form.phone),
         gender: cleanValue(form.gender),
         date_of_birth: cleanValue(form.dateOfBirth),
-        github_url: cleanValue(form.github),
-        linkedin_url: cleanValue(form.linkedin),
         location: cleanValue(form.location),
       };
       const payload = Object.fromEntries(
@@ -81,7 +76,7 @@ function EditTab({ profile }: EditingTabType) {
       }
 
       const { data, error } = await supabase
-        .from("students")
+        .from("profiles")
         .update(payload)
         .eq("id", profile.id)
         .select()
@@ -168,22 +163,6 @@ function EditTab({ profile }: EditingTabType) {
           type="date"
           icon={<Calendar className="h-4 w-4" />}
           value={form.dateOfBirth}
-          onChange={handleChange}
-        />
-
-        <InputField
-          name="github"
-          label="Github"
-          icon={<LinkIcon className="h-4 w-4" />}
-          value={form.github}
-          onChange={handleChange}
-        />
-
-        <InputField
-          name="linkedin"
-          label="LinkedIn"
-          icon={<LinkIcon className="h-4 w-4" />}
-          value={form.linkedin}
           onChange={handleChange}
         />
 

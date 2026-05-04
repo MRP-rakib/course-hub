@@ -10,7 +10,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log('auth event:',event)
     if(session?.user){
       dispatch(setUser(session.user))
-      const {data:profile}= await supabase.from('students').select('*').eq('id',session.user.id).single()
+      const {data:profile}= await supabase.from('profiles').select('*').eq('id',session.user.id).single()
       if(profile){
         dispatch(setProfile(profile))
       }else{
