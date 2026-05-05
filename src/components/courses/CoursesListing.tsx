@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import CourseCard from "./CourseCard";
 import Container from "../utils/Container";
 import PaginationBtn from "../utils/paginationBtn";
@@ -8,9 +8,6 @@ import { allCourses, toCourseCardProps } from "@/data/courses";
 import {
   Search,
   SlidersHorizontal,
-  Grid3x3,
-  LayoutGrid,
-  Rows3,
   Sparkles,
   TrendingUp,
   Clock,
@@ -20,45 +17,23 @@ import {
 } from "lucide-react";
 import { useCategories } from "@/redux/hooks/useCategories";
 import { useRouter, useSearchParams } from "next/navigation";
-
-
-const PAGE_SIZE = 8;
-
-type ViewMode = "grid-4" | "grid-3" | "grid-2";
-type SortOption = "popular" | "newest" | "rating" | "duration";
-
+const pageSize = 6;
 export default function CoursesListing() {
-  const { categories } = useCategories();
   const [page, setPage] = useState(1);
-  const [viewMode, setViewMode] = useState<ViewMode>("grid-4");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("popular");
   const [showFilters, setShowFilters] = useState(false);
-  const [priceFilter, setPriceFilter] = useState<"all" | "free" | "paid">(
-    "all",
-  );
-  const router = useRouter()
+  const router = useRouter();
+  const { categories } = useCategories();
   const searchParams = useSearchParams();
-  const categoryname = searchParams.get("category")??'all'
-  const [selectedCategory, setSelectedCategory] = useState(()=>categoryname)
-  
+  // const categoryname = searchParams.get("category") ?? "all";
+  const selectedCategory = searchParams.get("category");
 
-  
-
-  const pagedCourses = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return allCourses.slice(start, start + PAGE_SIZE);
-  }, [page]);
-
-  const gridCols = {
-    "grid-4": "xl:grid-cols-4",
-    "grid-3": "xl:grid-cols-3",
-    "grid-2": "xl:grid-cols-2",
-  };
-
+  const paginatedcourses = allCourses.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  );
   return (
     <section className="relative border-b border-white/6 bg-[#0a0a0f] py-14 md:py-16 lg:py-20 overflow-hidden">
-
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-violet-600/20 blur-[140px] animate-pulse" />
         <div className="absolute top-1/2 right-1/4 h-80 w-80 rounded-full bg-purple-600/15 blur-[120px] animate-pulse delay-700" />
@@ -140,42 +115,6 @@ export default function CoursesListing() {
                 className={`h-4 text-white w-4 transition-transform ${showFilters ? "rotate-180" : ""}`}
               />
             </button>
-
-            <div className="flex gap-2 bg-black/40 p-1.5 rounded-xl border border-white/10 backdrop-blur-xl">
-              <button
-                onClick={() => setViewMode("grid-4")}
-                className={`p-2.5 rounded-lg transition-all ${
-                  viewMode === "grid-4"
-                    ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/50"
-                    : "text-white/50 hover:text-white/80"
-                }`}
-                title="4 columns"
-              >
-                <Grid3x3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode("grid-3")}
-                className={`p-2.5 rounded-lg transition-all ${
-                  viewMode === "grid-3"
-                    ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/50"
-                    : "text-white/50 hover:text-white/80"
-                }`}
-                title="3 columns"
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode("grid-2")}
-                className={`p-2.5 rounded-lg transition-all ${
-                  viewMode === "grid-2"
-                    ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/50"
-                    : "text-white/50 hover:text-white/80"
-                }`}
-                title="2 columns"
-              >
-                <Rows3 className="h-4 w-4" />
-              </button>
-            </div>
           </div>
           {(showFilters || selectedCategory !== "all") && (
             <div className="rounded-xl border border-white/10 bg-linear-to-br from-white/[0.07] to-white/2 backdrop-blur-xl p-6 space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -186,83 +125,30 @@ export default function CoursesListing() {
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {categories.map((category) => (
-                  
-                  
-                      <button
+                    <button
                       key={category.id}
-                        onClick={() => {
-                          setSelectedCategory(category.name);
-
-                          router.push(`/courses?category=${encodeURIComponent(category.name)}`)
-                        }}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize ${
-                          selectedCategory=== category.name
-                            ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/30"
-                            : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10"
-                        }`}
-                      >
-                        {category.name}
-                      </button>
+                      onClick={() => {
+                        router.push(
+                          `/courses?category=${encodeURIComponent(category.name)}`,
+                        );
+                      }}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize ${
+                        selectedCategory === category.name
+                          ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/30"
+                          : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10"
+                      }`}
+                    >
+                      {category.name}
+                    </button>
                   ))}
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-6">
-
-                <div>
-                  <label className="text-sm font-semibold text-white/80 mb-3 block">
-                    Sort By
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {(
-                      [
-                        "popular",
-                        "newest",
-                        "rating",
-                        "duration",
-                      ] as SortOption[]
-                    ).map((sort) => (
-                      <button
-                        key={sort}
-                        onClick={() => setSortBy(sort)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${
-                          sortBy === sort
-                            ? "bg-violet-500/20 text-violet-300 border border-violet-500/30"
-                            : "bg-white/5 text-white/50 hover:text-white/80 border border-white/10"
-                        }`}
-                      >
-                        {sort}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-white/80 mb-3 block">
-                    Price
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {(["all", "free", "paid"] as const).map((price) => (
-                      <button
-                        key={price}
-                        onClick={() => setPriceFilter(price)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${
-                          priceFilter === price
-                            ? "bg-violet-500/20 text-violet-300 border border-violet-500/30"
-                            : "bg-white/5 text-white/50 hover:text-white/80 border border-white/10"
-                        }`}
-                      >
-                        {price}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <div className="grid md:grid-cols-2 gap-6"></div>
 
               <div className="pt-4 border-t border-white/10">
                 <button
                   onClick={() => {
-                    setSelectedCategory("all");
-                    setSortBy("popular");
-                    setPriceFilter("all");
+                    router.push("/courses");
                     setSearchQuery("");
                   }}
                   className="text-sm text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-2"
@@ -273,21 +159,13 @@ export default function CoursesListing() {
               </div>
             </div>
           )}
-          {(selectedCategory !== "all" ||
-            priceFilter !== "all" ||
-            searchQuery) && (
+          {(selectedCategory !== "all" || searchQuery) && (
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm text-white/50">Active filters:</span>
-              {selectedCategory !== "all" && (
+              {selectedCategory && selectedCategory !== "all" && (
                 <FilterBadge
                   label={selectedCategory}
-                  onRemove={() => setSelectedCategory("all")}
-                />
-              )}
-              {priceFilter !== "all" && (
-                <FilterBadge
-                  label={priceFilter}
-                  onRemove={() => setPriceFilter("all")}
+                  onRemove={() => router.push("/courses")}
                 />
               )}
               {searchQuery && (
@@ -303,7 +181,7 @@ export default function CoursesListing() {
           <p className="text-sm text-white/60">
             Showing{" "}
             <span className="font-semibold text-white">
-              {pagedCourses.length}
+              {allCourses.length}
             </span>{" "}
             of{" "}
             <span className="font-semibold text-white">
@@ -317,9 +195,9 @@ export default function CoursesListing() {
           </div>
         </div>
         <div
-          className={`grid grid-cols-1 gap-6 md:grid-cols-2 ${gridCols[viewMode]} transition-all duration-300`}
+          className={`grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-all duration-300`}
         >
-          {pagedCourses.map((course, index) => (
+          {paginatedcourses.map((course, index) => (
             <div
               key={course.href}
               className="group transition-all duration-300 hover:scale-[1.02]"
@@ -335,7 +213,7 @@ export default function CoursesListing() {
           <PaginationBtn
             currentPage={page}
             totalItems={allCourses.length}
-            pageSize={PAGE_SIZE}
+            pageSize={pageSize}
             onPageChange={setPage}
             siblingCount={1}
           />
@@ -344,7 +222,6 @@ export default function CoursesListing() {
     </section>
   );
 }
-
 
 function FilterBadge({
   label,
