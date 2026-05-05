@@ -25,8 +25,7 @@ export default function CoursesListing() {
   const router = useRouter();
   const { categories } = useCategories();
   const searchParams = useSearchParams();
-  // const categoryname = searchParams.get("category") ?? "all";
-  const selectedCategory = searchParams.get("category");
+  const selectedCategory = searchParams.get("category")??'all'
 
   const paginatedcourses = allCourses.slice(
     (page - 1) * pageSize,
@@ -106,7 +105,7 @@ export default function CoursesListing() {
               )}
             </div>
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => setShowFilters(prev=>!prev)}
               className="flex items-center justify-center gap-2 px-2 py-3.5 rounded-xl bg-black/40 border border-white/10 hover:bg-white/5 transition-all backdrop-blur-xl"
             >
               <SlidersHorizontal className="h-5 w-5 text-violet-400" />
@@ -116,7 +115,7 @@ export default function CoursesListing() {
               />
             </button>
           </div>
-          {(showFilters || selectedCategory !== "all") && (
+          {(showFilters || selectedCategory !=='all') && (
             <div className="rounded-xl border border-white/10 bg-linear-to-br from-white/[0.07] to-white/2 backdrop-blur-xl p-6 space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
               <div>
                 <label className="text-sm font-semibold text-white/80 mb-3 flex items-center gap-2">
