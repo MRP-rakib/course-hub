@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import CourseCard from "./CourseCard";
 import Container from "../utils/Container";
@@ -16,7 +17,6 @@ import {
   X,
 } from "lucide-react";
 import { useCategories } from "@/redux/hooks/useCategories";
-import { useRouter, useSearchParams } from "next/navigation";
 const pageSize = 6;
 export default function CoursesListing() {
   const [page, setPage] = useState(1);
