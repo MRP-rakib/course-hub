@@ -8,6 +8,7 @@ import Link from "next/link";
 import Container from "../utils/Container";
 import ProfileDropdown from "../auth/ProfileDropdown";
 import { useAppSelector } from "@/redux/hooks/hooks";
+import ProfileSkeleton from "../ui/ProfileSkeleton";
 interface MenuPropsType {
   menu: boolean;
   setMenu: (value: boolean) => void;
@@ -15,14 +16,13 @@ interface MenuPropsType {
 }
 function Navbar() {
   const [menu, setMenu] = useState<boolean>(false);
-  const {user} =useAppSelector(state=>state.auth)
+  const { user, loading } = useAppSelector((state) => state.auth);
   const pathname = usePathname();
 
   return (
     <>
       <nav className="sticky top-0 z-50 border-b border-white/[0.07] bg-[#0a0a0f]/80 backdrop-blur-xl">
         <Container className="flex h-16 items-center justify-between">
-          {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-2">
             <span className="font-display text-xl font-extrabold tracking-tight text-white">
               Course{" "}
@@ -32,8 +32,6 @@ function Navbar() {
             </span>
             <GraduationCap size={18} className="shrink-0 text-violet-400" />
           </Link>
-
-          {/* Desktop links */}
           <ul className="hidden items-center gap-8 lg:flex">
             {MenuItem.map((item, index) => (
               <li key={index}>
@@ -50,40 +48,45 @@ function Navbar() {
               </li>
             ))}
           </ul>
-          {user?(<div className=" flex items-center gap-1">
-            <ProfileDropdown/> <button
-              type="button"
-              onClick={() => setMenu(true)}
-              aria-label="Open menu"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/60 transition-colors hover:bg-white/8 hover:text-white lg:hidden"
-            >
-              <Menu size={17} />
-            </button>
-          </div>):(
+          {loading ? (
+            <ProfileSkeleton />
+          ) : user ? (
+            <div className="flex items-center gap-2">
+            <ProfileDropdown />
+             <button
+                type="button"
+                onClick={() => setMenu(true)}
+                aria-label="Open menu"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/60 transition-colors hover:bg-white/8 hover:text-white lg:hidden"
+              >
+                <Menu size={17} />
+              </button>
+              </div>
+          ) : (
             <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              href="/signin"
-              className="hidden rounded-lg border border-white/1 bg-white/4 px-3 py-2 font-display text-xs font-bold tracking-wide text-white/85 transition-colors hover:border-white/16 hover:bg-white/[0.07] sm:inline-flex"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/join"
-              className="relative overflow-hidden rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-3 py-2 font-display text-xs font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-95 sm:px-4"
-            >
-              Join Now →
-            </Link>
-            <button
-              type="button"
-              onClick={() => setMenu(true)}
-              aria-label="Open menu"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/60 transition-colors hover:bg-white/8 hover:text-white lg:hidden"
-            >
-              <Menu size={17} />
-            </button>
-          </div>
+              <Link
+                href="/signin"
+                className="hidden rounded-lg border border-white/1 bg-white/4 px-3 py-2 font-display text-xs font-bold tracking-wide text-white/85 transition-colors hover:border-white/16 hover:bg-white/[0.07] sm:inline-flex"
+              >
+                Sign in
+              </Link>
+
+              <Link
+                href="/join"
+                className="relative overflow-hidden rounded-lg bg-linear-to-r from-violet-600 to-purple-600 px-3 py-2 font-display text-xs font-bold tracking-wide text-white transition-opacity hover:opacity-90 active:scale-95 sm:px-4"
+              >
+                Join Now →
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMenu(true)}
+                aria-label="Open menu"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/60 transition-colors hover:bg-white/8 hover:text-white lg:hidden"
+              >
+                <Menu size={17} />
+              </button>
+            </div>
           )}
-          
         </Container>
       </nav>
 

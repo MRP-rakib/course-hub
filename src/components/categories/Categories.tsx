@@ -13,6 +13,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useCategories } from "@/redux/hooks/useCategories";
+import { useAppSelector } from "@/redux/hooks/hooks";
+import { CategorySkeleton } from "../ui/CategorySkeleton";
 
 // Category icon mapping
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
@@ -29,7 +31,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
 
 export default function Categories() {
 const {categories,error} =useCategories()
-
+const {loading} = useAppSelector(state=>state.category)
 
   
 
@@ -37,7 +39,7 @@ const {categories,error} =useCategories()
     return (
       <section className="relative overflow-hidden border-b border-white/6 bg-[#0a0a0f]">
         <Container className="relative py-14 md:py-16 lg:py-20">
-         <div className="text-center text-white/50">{error}</div>
+         <div className="text-center text-2xl text-white/50">Data not found</div>
         </Container>
       </section>
     );
@@ -62,6 +64,9 @@ const {categories,error} =useCategories()
         </div>
 
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {loading&&
+          <CategorySkeleton/>
+          }
           {categories.map((category) => {
             const Icon = CATEGORY_ICONS[category.name] || Code2
 
