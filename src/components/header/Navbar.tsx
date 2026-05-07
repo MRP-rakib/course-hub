@@ -16,8 +16,9 @@ interface MenuPropsType {
 }
 function Navbar() {
   const [menu, setMenu] = useState<boolean>(false);
-  const { user, loading } = useAppSelector((state) => state.auth);
+  const { profile, loading } = useAppSelector((state) => state.auth);
   const pathname = usePathname();
+
 
   return (
     <>
@@ -50,7 +51,7 @@ function Navbar() {
           </ul>
           {loading ? (
             <ProfileSkeleton />
-          ) : user ? (
+          ) : profile? (
             <div className="flex items-center gap-2">
             <ProfileDropdown />
              <button
