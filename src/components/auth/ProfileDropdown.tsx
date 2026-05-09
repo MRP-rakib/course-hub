@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, User, BookOpen, ChevronDown } from "lucide-react";
+import { LogOut, User, BookOpen, ChevronDown, LayoutDashboard } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
@@ -97,6 +97,16 @@ const Signout = async () => {
               <BookOpen size={15} className="text-violet-400" />
               My Courses
             </Link>
+            {profile?.role==='instructor'&&
+              <Link
+              href="/dashboard"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/60 transition-colors hover:bg-white/4 hover:text-white"
+            >
+              <LayoutDashboard size={15} className="text-violet-400" />
+              Dashboard
+            </Link>
+            }
           </div>
 
           {/* Logout */}
