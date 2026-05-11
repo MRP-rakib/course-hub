@@ -1,0 +1,295 @@
+"use client";
+
+import Image from "next/image";
+import { X, ChevronDown, Sparkles, Upload } from "lucide-react";
+import { Course } from "@/app/dashboard/courses/page";
+import { useState } from "react";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type ModalProps = {
+  onClose: () => void;
+  onSave: (data: Omit<Course, "id">) => void;
+  initial?: Course | null;
+};
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const CATEGORIES = ["Development", "Design", "Data Science", "Marketing", "Business"];
+const LEVELS = ["Beginner", "Intermediate", "Advanced"];
+
+const EMPTY_FORM = {
+  title: "",
+  instructor: "",
+  category: "Development",
+  level: "Beginner",
+  price: "",
+  thumbnail: "",
+  href: "",
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+function AddCourse({ onClose, onSave, initial }: ModalProps) {
+  const [form, setForm] = useState(
+    initial
+      ? {
+          title: initial.title,
+          instructor: initial.instructor,
+          category: initial.category,
+          level: initial.level,
+          price: initial.price,
+          thumbnail: initial.thumbnail,
+          href: initial.href,
+        }
+      : EMPTY_FORM
+  );
+
+  const [errors, setErrors] = useState<Partial<Record<keyof typeof EMPTY_FORM, string>>>({});
+  const [imgError, setImgError] = useState(false);
+
+  const set = (k: keyof typeof EMPTY_FORM, v: string) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    if (errors[k]) setErrors((p) => ({ ...p, [k]: undefined }));
+  };
+
+  const validate = () => {
+    const e: typeof errors = {};
+    if (!form.title.trim()) e.title = "Course title is required";
+    if (!form.instructor.trim()) e.instructor = "Instructor name is required";
+    if (!form.price.trim()) e.price = "Price is required";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSave = () => {
+    if (!validate()) return;
+    onSave({
+      title: form.title,
+      instructor: form.instructor,
+      category: form.category,
+      level: form.level,
+      lessons: 0,
+      duration: "—",
+      rating: 0,
+      students: 0,
+      price: form.price,
+      href: form.href || "#",
+      thumbnail:
+        form.thumbnail ||
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop",
+    });
+  };
+
+  // ── Shared styles ──────────────────────────────────────────────────────────
+
+  const inputBase =
+    "w-full rounded-xl bg-white/[0.04] border text-sm text-white placeholder-white/25 outline-none transition-all duration-200 px-4 py-3 focus:bg-violet-500/5 focus:ring-1 focus:ring-violet-500/30";
+
+  const inputCls = (field: keyof typeof EMPTY_FORM) =>
+    `${inputBase} ${
+      errors[field]
+        ? "border-rose-500/50 focus:border-rose-500/70"
+        : "border-white/8 focus:border-violet-500/50"
+    }`;
+
+  const selectCls = `${inputBase} border-white/8 focus:border-violet-500/50 appearance-none pr-9 cursor-pointer`;
+
+  const label = "block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2";
+
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="absolute inset-0 bg-black/65 backdrop-blur-lg" />
+
+      <div className="relative flex w-full max-w-lg flex-col max-h-[92vh] rounded-2xl border border-white/10 bg-[#0d0d14] shadow-2xl shadow-black/60">
+
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-violet-500/60 to-transparent" />
+
+        {/* Ambient blobs */}
+        <div className="pointer-events-none absolute -top-20 -left-20 h-48 w-48 rounded-full bg-violet-600/12 blur-[80px]" />
+        <div className="pointer-events-none absolute -bottom-20 -right-16 h-48 w-48 rounded-full bg-purple-700/10 blur-[80px]" />
+
+        <div className="relative flex items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 rounded-xl bg-linear-to-br from-violet-500 to-purple-600 opacity-50 blur-md" />
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-violet-500 via-purple-500 to-indigo-500 shadow-lg">
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-[15px] font-bold leading-tight text-white">
+                {initial ? "Edit Course" : "New Course"}
+              </h2>
+              <p className="text-[11px] text-white/35">
+                {initial ? "Update course details" : "Fill in the details to publish"}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-white/40 transition-all duration-200 hover:border-white/15 hover:bg-white/8 hover:text-white"
+            aria-label="Close"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+        <div className="mx-6 h-px bg-white/6" />
+        <div className="relative flex-1 overflow-y-auto space-y-5 px-6 py-5">
+
+          {/* Thumbnail preview strip (shown when URL entered) */}
+          {form.thumbnail && !imgError && (
+            <div className="relative h-28 w-full overflow-hidden rounded-xl border border-white/8">
+              <Image
+                src={form.thumbnail}
+                alt="thumbnail preview"
+                fill
+                className="object-cover"
+                onError={() => setImgError(true)}
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+              <span className="absolute bottom-2 left-3 text-[10px] font-semibold uppercase tracking-widest text-white/60">
+                Preview
+              </span>
+            </div>
+          )}
+          <div>
+            <label className={label}>Course Title <span className="text-violet-400/80">*</span></label>
+            <input
+              className={inputCls("title")}
+              placeholder="e.g. Advanced React Patterns"
+              value={form.title}
+              onChange={(e) => set("title", e.target.value)}
+            />
+            {errors.title && (
+              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-rose-400">
+                <span className="inline-block h-1 w-1 rounded-full bg-rose-400" />
+                {errors.title}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className={label}>Instructor <span className="text-violet-400/80">*</span></label>
+            <input
+              className={inputCls("instructor")}
+              placeholder="Instructor name"
+              value={form.instructor}
+              onChange={(e) => set("instructor", e.target.value)}
+            />
+            {errors.instructor && (
+              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-rose-400">
+                <span className="inline-block h-1 w-1 rounded-full bg-rose-400" />
+                {errors.instructor}
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={label}>Category</label>
+              <div className="relative">
+                <select
+                  className={selectCls}
+                  value={form.category}
+                  onChange={(e) => set("category", e.target.value)}
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c} className="bg-[#0d0d14]">{c}</option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
+              </div>
+            </div>
+
+            <div>
+              <label className={label}>Level</label>
+              <div className="relative">
+                <select
+                  className={selectCls}
+                  value={form.level}
+                  onChange={(e) => set("level", e.target.value)}
+                >
+                  {LEVELS.map((l) => (
+                    <option key={l} value={l} className="bg-[#0d0d14]">{l}</option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className={label}>Price <span className="text-violet-400/80">*</span></label>
+            <input
+              className={inputCls("price")}
+              placeholder="e.g. $89.00"
+              value={form.price}
+              onChange={(e) => set("price", e.target.value)}
+            />
+            {errors.price && (
+              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-rose-400">
+                <span className="inline-block h-1 w-1 rounded-full bg-rose-400" />
+                {errors.price}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className={label}>Thumbnail URL</label>
+            <div className="flex gap-2">
+              <input
+                className={`${inputCls("thumbnail")} flex-1`}
+                placeholder="https://..."
+                value={form.thumbnail}
+                onChange={(e) => { set("thumbnail", e.target.value); setImgError(false); }}
+              />
+              <button
+                type="button"
+                className="shrink-0 flex items-center gap-1.5 rounded-xl border border-white/8 bg-white/4 px-3 text-xs text-white/40 transition-all hover:border-white/15 hover:bg-white/8 hover:text-white/80"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Upload</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className={label}>Course URL <span className="text-white/20 normal-case tracking-normal font-normal">optional</span></label>
+            <input
+              className={inputCls("href")}
+              placeholder="/courses/my-course"
+              value={form.href}
+              onChange={(e) => set("href", e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="relative shrink-0 flex items-center justify-end gap-2.5 border-t border-white/6 px-6 py-4">
+          <button
+            onClick={onClose}
+            className="rounded-xl border border-white/8 bg-transparent px-5 py-2.5 text-sm font-medium text-white/50 transition-all duration-200 hover:border-white/15 hover:bg-white/5 hover:text-white/80"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={handleSave}
+            className="group relative overflow-hidden rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+          >
+
+            <div className="absolute inset-0 bg-linear-to-r from-violet-600 to-purple-600 transition-opacity duration-200 group-hover:opacity-90" />
+            <div className="absolute inset-0 translate-x-full bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
+            <div className="absolute inset-0 rounded-xl shadow-lg shadow-violet-500/25" />
+            <span className="relative">
+              {initial ? "Save Changes" : "Add Course"}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AddCourse;

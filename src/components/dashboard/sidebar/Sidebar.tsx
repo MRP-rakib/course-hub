@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronLeft, ChevronRight, LayoutDashboard, BookOpen, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { toggleSidebar } from "@/redux/features/sidebar";
 
 interface MenuItem {
   icon: React.ReactNode;
@@ -30,16 +31,14 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function Sidebar() {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const {isExpanded} = useAppSelector(state=>state.sidebar)
   const pathname = usePathname();
-
-  const toggleSidebar = () => setIsExpanded(!isExpanded);
-
+  const dispatch = useAppDispatch()
   return (
       <aside
         className={`
-          min-h-full
-          ${isExpanded ? "w-72" : "w-15 lg:w-20"}
+          min-h-full fixed top-16 lg:top-0 lg:relative z-50
+          ${isExpanded ? "w-72" : "w-0 overflow-hidden lg:w-20"}
           bg-[#0a0a0f]/95 backdrop-blur-2xl
           border-r border-white/10
           transition-all duration-300 ease-in-out
@@ -55,7 +54,7 @@ export default function Sidebar() {
           {/* TOGGLE BUTTON */}
           <div className="flex items-center justify-end mb-6">
             <button
-              onClick={toggleSidebar}
+              onClick={()=>dispatch(toggleSidebar())}
               className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all duration-300 hover:scale-110"
             >
               {isExpanded ? (
