@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Trophy, User, Mail, MapPin, Calendar, Shield, Edit3, Check, X } from "lucide-react";
+import { BookOpen, Trophy, User, Mail, MapPin, Calendar, Shield, Edit3, Check} from "lucide-react";
 import Container from "@/components/utils/Container";
 import { StatCard } from "@/components/profiles/StatCard";
 import SecurityTab from "@/components/profiles/SecurityTab";

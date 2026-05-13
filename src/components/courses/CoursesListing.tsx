@@ -5,7 +5,6 @@ import { useState } from "react";
 import CourseCard from "./CourseCard";
 import Container from "../utils/Container";
 import PaginationBtn from "../utils/paginationBtn";
-import { allCourses, toCourseCardProps } from "@/data/courses";
 import {
   Search,
   SlidersHorizontal,
@@ -17,6 +16,8 @@ import {
   X,
 } from "lucide-react";
 import { useCategories } from "@/redux/hooks/useCategories";
+// import { Course } from "@/types/course";
+import { useCourse } from "@/services/courses/courses";
 const pageSize = 6;
 export default function CoursesListing() {
   const [page, setPage] = useState(1);
@@ -26,8 +27,9 @@ export default function CoursesListing() {
   const { categories } = useCategories();
   const searchParams = useSearchParams();
   const selectedCategory = searchParams.get("category")??'all'
+  const {courses} = useCourse()
 
-  const paginatedcourses = allCourses.slice(
+  const paginatedcourses = courses.slice(
     (page - 1) * pageSize,
     page * pageSize,
   );
@@ -63,7 +65,7 @@ export default function CoursesListing() {
               <div className="h-2 w-2 rounded-full bg-violet-500 animate-pulse" />
               <span className="text-white/60">
                 <span className="font-semibold text-white">
-                  {allCourses.length}
+                  {courses.length}
                 </span>{" "}
                 Courses
               </span>
@@ -180,11 +182,11 @@ export default function CoursesListing() {
           <p className="text-sm text-white/60">
             Showing{" "}
             <span className="font-semibold text-white">
-              {allCourses.length}
+              {courses.length}
             </span>{" "}
             of{" "}
             <span className="font-semibold text-white">
-              {allCourses.length}
+              {courses.length}
             </span>{" "}
             courses
           </p>
@@ -198,20 +200,20 @@ export default function CoursesListing() {
         >
           {paginatedcourses.map((course, index) => (
             <div
-              key={course.href}
+              key={course.id}
               className="group transition-all duration-300 hover:scale-[1.02]"
               style={{
                 animationDelay: `${index * 50}ms`,
               }}
             >
-              <CourseCard {...toCourseCardProps(course)} />
+              <CourseCard {...(course)} />
             </div>
           ))}
         </div>
         <div className="mt-12">
           <PaginationBtn
             currentPage={page}
-            totalItems={allCourses.length}
+            totalItems={courses.length}
             pageSize={pageSize}
             onPageChange={setPage}
             siblingCount={1}

@@ -1,10 +1,12 @@
+'use client'
 import CourseCard from "./CourseCard";
 import Container from "../utils/Container";
-import { allCourses, toCourseCardProps } from "@/data/courses";
-
-const featuredCourses = allCourses.slice(0, 4);
+import { useCourse } from "@/services/courses/courses";
 
 export default function FeatureCourse() {
+   const {courses} = useCourse()
+    const featuredCourses = courses.slice(0, 4);
+
   return (
     <section className="border-b border-white/6 bg-[#0a0a0f] py-14 md:py-16 lg:py-20">
       <Container>
@@ -23,7 +25,7 @@ export default function FeatureCourse() {
 
         <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {featuredCourses.map((course) => (
-            <CourseCard key={course.href} {...toCourseCardProps(course)} />
+            <CourseCard key={course.id} {...(course)} />
           ))}
         </div>
       </Container>

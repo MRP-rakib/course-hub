@@ -6,7 +6,7 @@ import { LoadingDots } from "@/components/auth/LoadingDots";
 import InputField from "@/components/ui/InputField";
 import { usePathname, useRouter } from "next/navigation";
 import { signup } from "@/services/auth/signup";
-import { createProfile } from "@/services/profileServices";
+import { createProfile } from "@/services/auth/profileServices";
 
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);

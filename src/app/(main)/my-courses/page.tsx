@@ -3,10 +3,19 @@
 import { useState } from "react";
 import CourseCard from "@/components/courses/CourseCard";
 import Container from "@/components/utils/Container";
-import { allCourses, toCourseCardProps } from "@/data/courses";
-import { BookOpen, Grid3x3, List, Search, Filter, TrendingUp, Clock, Award, ChevronDown } from "lucide-react";
-
-const enrollCourses = allCourses.slice(0, 4);
+import {
+  BookOpen,
+  Grid3x3,
+  List,
+  Search,
+  Filter,
+  TrendingUp,
+  Clock,
+  Award,
+  ChevronDown,
+} from "lucide-react";
+import { useCourse } from "@/services/courses/courses";
+import ViewList from "@/components/courses/ViewList";
 
 type ViewMode = "grid" | "list";
 type FilterType = "all" | "in-progress" | "completed" | "not-started";
@@ -16,6 +25,8 @@ export default function MyCourses() {
   const [filter, setFilter] = useState<FilterType>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const { courses } = useCourse();
+  const enrollCourses = courses.slice(0, 4);
 
   // Mock stats - replace with actual data
   const stats = {
@@ -39,7 +50,7 @@ export default function MyCourses() {
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent mb-2">
+              <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-white via-white to-white/70 bg-clip-text text-transparent mb-2">
                 My Courses
               </h1>
               <p className="text-white/60 text-base">
@@ -54,7 +65,7 @@ export default function MyCourses() {
                   onClick={() => setViewMode("grid")}
                   className={`p-2.5 rounded-lg transition-all duration-300 ${
                     viewMode === "grid"
-                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/50"
+                      ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/50"
                       : "text-white/50 hover:text-white/80"
                   }`}
                 >
@@ -64,7 +75,7 @@ export default function MyCourses() {
                   onClick={() => setViewMode("list")}
                   className={`p-2.5 rounded-lg transition-all duration-300 ${
                     viewMode === "list"
-                      ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/50"
+                      ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/50"
                       : "text-white/50 hover:text-white/80"
                   }`}
                 >
@@ -103,7 +114,7 @@ export default function MyCourses() {
           </div>
 
           {/* SEARCH AND FILTERS */}
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-2xl p-6 shadow-xl shadow-violet-900/10">
+          <div className="rounded-2xl border border-white/10 bg-linear-to-br from-white/[0.07] to-white/2 backdrop-blur-2xl p-6 shadow-xl shadow-violet-900/10">
             <div className="flex flex-col md:flex-row gap-4">
               {/* SEARCH BAR */}
               <div className="flex-1 relative">
@@ -136,21 +147,26 @@ export default function MyCourses() {
             {showFilters && (
               <div className="mt-4 pt-4 border-t border-white/10">
                 <div className="flex flex-wrap gap-2">
-                  {(["all", "in-progress", "completed", "not-started"] as FilterType[]).map(
-                    (filterOption) => (
-                      <button
-                        key={filterOption}
-                        onClick={() => setFilter(filterOption)}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize ${
-                          filter === filterOption
-                            ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/30"
-                            : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10"
-                        }`}
-                      >
-                        {filterOption.replace("-", " ")}
-                      </button>
-                    )
-                  )}
+                  {(
+                    [
+                      "all",
+                      "in-progress",
+                      "completed",
+                      "not-started",
+                    ] as FilterType[]
+                  ).map((filterOption) => (
+                    <button
+                      key={filterOption}
+                      onClick={() => setFilter(filterOption)}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize ${
+                        filter === filterOption
+                          ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/30"
+                          : "bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/10"
+                      }`}
+                    >
+                      {filterOption.replace("-", " ")}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
@@ -161,10 +177,13 @@ export default function MyCourses() {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-white/90">
-              {filter === "all" ? "All Courses" : `${filter.replace("-", " ")} Courses`}
+              {filter === "all"
+                ? "All Courses"
+                : `${filter.replace("-", " ")} Courses`}
             </h2>
             <span className="text-sm text-white/50">
-              {enrollCourses.length} {enrollCourses.length === 1 ? "course" : "courses"}
+              {enrollCourses.length}{" "}
+              {enrollCourses.length === 1 ? "course" : "courses"}
             </span>
           </div>
 
@@ -173,81 +192,18 @@ export default function MyCourses() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {enrollCourses.map((course) => (
                 <div
-                  key={course.href}
+                  key={course.id}
                   className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02]"
                 >
-                  {/* Optional: Add progress indicator overlay */}
-                  <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-white/20 text-xs font-semibold text-white">
-                    {Math.floor(Math.random() * 100)}% Complete
-                  </div>
-                  <CourseCard {...toCourseCardProps(course)} />
+                  <CourseCard {...course} />
                 </div>
               ))}
             </div>
           )}
 
-          {/* LIST VIEW */}
+
           {viewMode === "list" && (
-            <div className="space-y-4">
-              {enrollCourses.map((course, index) => (
-                <div
-                  key={course.href}
-                  className="group relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-2xl p-6 hover:border-violet-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/20"
-                >
-                  <div className="flex flex-col md:flex-row gap-6">
-                    {/* Course thumbnail placeholder */}
-                    <div className="w-full md:w-48 h-32 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center border border-white/10">
-                      <BookOpen className="h-12 w-12 text-violet-400" />
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="text-lg font-semibold mb-1 group-hover:text-violet-400 transition-colors">
-                            Course {index + 1}
-                          </h3>
-                          <p className="text-sm text-white/60">
-                            Continue your learning journey
-                          </p>
-                        </div>
-                        <span className="px-3 py-1 rounded-full bg-violet-500/20 text-violet-300 text-xs font-semibold border border-violet-500/30">
-                          In Progress
-                        </span>
-                      </div>
-
-                      {/* Progress bar */}
-                      <div className="mb-4">
-                        <div className="flex items-center justify-between text-xs text-white/60 mb-2">
-                          <span>Progress</span>
-                          <span>{Math.floor(Math.random() * 100)}%</span>
-                        </div>
-                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full transition-all duration-500"
-                            style={{ width: `${Math.floor(Math.random() * 100)}%` }}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-4 text-sm text-white/50">
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          12 hours
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <BookOpen className="h-4 w-4" />
-                          24 lessons
-                        </span>
-                      </div>
-                    </div>
-
-                    <button className="self-end md:self-center px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:shadow-lg hover:shadow-violet-500/50 transition-all duration-300 font-medium text-sm">
-                      Continue
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+           <ViewList enrollCourses={enrollCourses}/>
           )}
         </div>
 
@@ -261,7 +217,7 @@ export default function MyCourses() {
             <p className="text-white/60 mb-6">
               Start your learning journey by enrolling in a course
             </p>
-            <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:shadow-lg hover:shadow-violet-500/50 transition-all duration-300 font-medium">
+            <button className="px-6 py-3 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 hover:shadow-lg hover:shadow-violet-500/50 transition-all duration-300 font-medium">
               Browse Courses
             </button>
           </div>
@@ -285,15 +241,18 @@ function StatCard({
   color: "violet" | "purple" | "pink" | "emerald";
 }) {
   const colorClasses = {
-    violet: "from-violet-500/20 to-violet-600/5 border-violet-500/20 text-violet-400",
-    purple: "from-purple-500/20 to-purple-600/5 border-purple-500/20 text-purple-400",
+    violet:
+      "from-violet-500/20 to-violet-600/5 border-violet-500/20 text-violet-400",
+    purple:
+      "from-purple-500/20 to-purple-600/5 border-purple-500/20 text-purple-400",
     pink: "from-pink-500/20 to-pink-600/5 border-pink-500/20 text-pink-400",
-    emerald: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/20 text-emerald-400",
+    emerald:
+      "from-emerald-500/20 to-emerald-600/5 border-emerald-500/20 text-emerald-400",
   };
 
   return (
     <div
-      className={`rounded-2xl border bg-gradient-to-br backdrop-blur-xl p-5 hover:scale-105 transition-all duration-300 ${colorClasses[color]}`}
+      className={`rounded-2xl border bg-linear-to-br backdrop-blur-xl p-5 hover:scale-105 transition-all duration-300 ${colorClasses[color]}`}
     >
       <div className="mb-3">{icon}</div>
       <div className="text-2xl font-bold mb-1">{value}</div>

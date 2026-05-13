@@ -1,24 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Clock3, Star, Users2 } from "lucide-react";
+import { Course } from "@/types/course";
 
-export type CourseCardProps = {
-  title: string;
-  instructor: string;
-  category: string;
-  level: string;
-  lessons: number;
-  duration: string;
-  rating: number;
-  students: number;
-  price: string;
-  href: string;
-  thumbnail: string;
-  badge?: string;
-  ctaLabel?: string;
-};
 
 export default function CourseCard({
+  id,
   title,
   instructor,
   category,
@@ -28,19 +15,17 @@ export default function CourseCard({
   rating,
   students,
   price,
-  href,
   thumbnail,
   badge,
-  ctaLabel = "View Course",
-}: CourseCardProps) {
+}: Course) {
   return (
     <article className="group overflow-hidden rounded-2xl border border-white/8 bg-white/2 transition-all duration-200 hover:-translate-y-1 hover:border-violet-500/30 hover:bg-violet-500/[0.07]">
       <Link
-        href={href}
+        href={`/courses/${id}`}
         className="relative block aspect-16/10 w-full overflow-hidden bg-white/4"
       >
         <Image
-          src={thumbnail}
+          src={thumbnail||''}
           alt={title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
@@ -56,12 +41,12 @@ export default function CourseCard({
       <div className="p-5">
         <div className="space-y-2">
           <span className="inline-flex rounded-full border border-violet-500/25 bg-violet-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-violet-300">
-            {category}
+            {category?.name}
           </span>
           <h3 className="text-lg font-bold leading-tight text-white">{title}</h3>
         </div>
 
-        <p className="mt-3 text-sm text-white/60">By {instructor}</p>
+        <p className="mt-3 text-sm text-white/60">By {instructor?.fullname}</p>
 
         <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/55">
           <p className="rounded-lg border border-white/8 bg-white/3 px-2.5 py-1.5">{level}</p>
@@ -77,7 +62,7 @@ export default function CourseCard({
           </p>
           <p className="inline-flex items-center gap-1.5">
             <Star size={14} className="text-amber-300" />
-            {rating.toFixed(1)}
+            {rating}
           </p>
           <p className="inline-flex items-center gap-1.5">
             <Users2 size={14} />
@@ -88,10 +73,10 @@ export default function CourseCard({
         <div className="mt-5 flex items-center justify-between border-t border-white/8 pt-4">
           <p className="text-xl font-bold text-white">{price}</p>
           <Link
-            href={href}
+            href={`/courses/${id}`}
             className="rounded-lg border border-white/12 bg-white/3 px-3 py-2 text-sm font-semibold text-white transition-colors hover:border-violet-500/35 hover:bg-violet-500/10 hover:text-violet-200"
           >
-            {ctaLabel}
+            View Course
           </Link>
         </div>
       </div>

@@ -1,3 +1,4 @@
+'use client'
 import Link from "next/link";
 import {
   ArrowRight,
@@ -8,9 +9,9 @@ import {
   Target,
   Users2,
 } from "lucide-react";
-import { allCourses } from "@/data/courses";
 import { allInstructors } from "@/data/instructors";
 import Container from "../utils/Container";
+import { useAppSelector } from "@/redux/hooks/hooks";
 
 const values = [
   {
@@ -36,9 +37,10 @@ const values = [
 ];
 
 export default function AboutContent() {
-  const courseCount = allCourses.length;
+  const {courses} = useAppSelector(state=>state.course)
+  const courseCount = courses.length;
   const instructorCount = allInstructors.length;
-  const learnerReach = allCourses.reduce((sum, c) => sum + c.students, 0);
+  const learnerReach = courses.reduce((sum, c) => sum + c.students, 0);
 
   const stats = [
     { label: "Courses live", value: `${courseCount}+` },

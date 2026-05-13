@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { X, ChevronDown, Sparkles, Upload } from "lucide-react";
-import { Course } from "@/app/dashboard/courses/page";
 import { useState } from "react";
+import { useAppSelector } from "@/redux/hooks/hooks";
+import { Course } from "@/types/course";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -14,38 +15,37 @@ type ModalProps = {
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-
-const CATEGORIES = ["Development", "Design", "Data Science", "Marketing", "Business"];
 const LEVELS = ["Beginner", "Intermediate", "Advanced"];
 
 const EMPTY_FORM = {
   title: "",
-  instructor: "",
-  category: "Development",
+  description:'',
+  category: "",
   level: "Beginner",
   price: "",
   thumbnail: "",
-  href: "",
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 function AddCourse({ onClose, onSave, initial }: ModalProps) {
+  const { categories } = useAppSelector((state) => state.category);
   const [form, setForm] = useState(
     initial
       ? {
           title: initial.title,
-          instructor: initial.instructor,
+          description:initial.description,
           category: initial.category,
           level: initial.level,
           price: initial.price,
           thumbnail: initial.thumbnail,
-          href: initial.href,
         }
-      : EMPTY_FORM
+      : EMPTY_FORM,
   );
 
-  const [errors, setErrors] = useState<Partial<Record<keyof typeof EMPTY_FORM, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof typeof EMPTY_FORM, string>>
+  >({});
   const [imgError, setImgError] = useState(false);
 
   const set = (k: keyof typeof EMPTY_FORM, v: string) => {
@@ -56,33 +56,21 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
   const validate = () => {
     const e: typeof errors = {};
     if (!form.title.trim()) e.title = "Course title is required";
-    if (!form.instructor.trim()) e.instructor = "Instructor name is required";
-    if (!form.price.trim()) e.price = "Price is required";
+    if (!form.description?.trim()) e.title = "description is required";
+    if (!form.price) e.price = "Price is required";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
   const handleSave = () => {
     if (!validate()) return;
-    onSave({
-      title: form.title,
-      instructor: form.instructor,
-      category: form.category,
-      level: form.level,
-      lessons: 0,
-      duration: "—",
-      rating: 0,
-      students: 0,
-      price: form.price,
-      href: form.href || "#",
-      thumbnail:
-        form.thumbnail ||
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop",
-    });
+   console.log(onSave);
+   
   };
 
   // ── Shared styles ──────────────────────────────────────────────────────────
 
+  
   const inputBase =
     "w-full rounded-xl bg-white/[0.04] border text-sm text-white placeholder-white/25 outline-none transition-all duration-200 px-4 py-3 focus:bg-violet-500/5 focus:ring-1 focus:ring-violet-500/30";
 
@@ -93,11 +81,6 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
         : "border-white/8 focus:border-violet-500/50"
     }`;
 
-  const selectCls = `${inputBase} border-white/8 focus:border-violet-500/50 appearance-none pr-9 cursor-pointer`;
-
-  const label = "block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2";
-
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
@@ -106,7 +89,6 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
       <div className="absolute inset-0 bg-black/65 backdrop-blur-lg" />
 
       <div className="relative flex w-full max-w-lg flex-col max-h-[92vh] rounded-2xl border border-white/10 bg-[#0d0d14] shadow-2xl shadow-black/60">
-
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-violet-500/60 to-transparent" />
 
         {/* Ambient blobs */}
@@ -127,7 +109,9 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
                 {initial ? "Edit Course" : "New Course"}
               </h2>
               <p className="text-[11px] text-white/35">
-                {initial ? "Update course details" : "Fill in the details to publish"}
+                {initial
+                  ? "Update course details"
+                  : "Fill in the details to publish"}
               </p>
             </div>
           </div>
@@ -142,7 +126,6 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
         </div>
         <div className="mx-6 h-px bg-white/6" />
         <div className="relative flex-1 overflow-y-auto space-y-5 px-6 py-5">
-
           {/* Thumbnail preview strip (shown when URL entered) */}
           {form.thumbnail && !imgError && (
             <div className="relative h-28 w-full overflow-hidden rounded-xl border border-white/8">
@@ -160,7 +143,9 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             </div>
           )}
           <div>
-            <label className={label}>Course Title <span className="text-violet-400/80">*</span></label>
+            <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">
+              Course Title <span className="text-violet-400/80">*</span>
+            </label>
             <input
               className={inputCls("title")}
               placeholder="e.g. Advanced React Patterns"
@@ -175,31 +160,40 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             )}
           </div>
           <div>
-            <label className={label}>Instructor <span className="text-violet-400/80">*</span></label>
-            <input
-              className={inputCls("instructor")}
-              placeholder="Instructor name"
-              value={form.instructor}
-              onChange={(e) => set("instructor", e.target.value)}
+            <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">
+              Description <span className="text-violet-400/80">*</span>
+            </label>
+            <textarea
+              className={inputCls("title")}
+              placeholder="e.g. Advanced React Patterns"
+              value={form.description||''}
+              onChange={(e) => set("description", e.target.value)}
             />
-            {errors.instructor && (
+            {errors.description && (
               <p className="mt-1.5 flex items-center gap-1 text-[11px] text-rose-400">
                 <span className="inline-block h-1 w-1 rounded-full bg-rose-400" />
-                {errors.instructor}
+                {errors.description}
               </p>
             )}
           </div>
+         
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={label}>Category</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">Category</label>
               <div className="relative">
                 <select
-                  className={selectCls}
-                  value={form.category}
+                  className={`${inputBase} border-white/8 focus:border-violet-500/50 appearance-none pr-9 cursor-pointer`}
+                  value={
+                    typeof form.category === "string"
+                      ? form.category
+                      : form.category?.name || ""
+                  }
                   onChange={(e) => set("category", e.target.value)}
                 >
-                  {CATEGORIES.map((c) => (
-                    <option key={c} value={c} className="bg-[#0d0d14]">{c}</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.name} className="bg-[#0d0d14]">
+                      {c.name}
+                    </option>
                   ))}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
@@ -207,15 +201,17 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             </div>
 
             <div>
-              <label className={label}>Level</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">Level</label>
               <div className="relative">
                 <select
-                  className={selectCls}
-                  value={form.level}
+                  className={`${inputBase} border-white/8 focus:border-violet-500/50 appearance-none pr-9 cursor-pointer`}
+                  value={form.level || ""}
                   onChange={(e) => set("level", e.target.value)}
                 >
                   {LEVELS.map((l) => (
-                    <option key={l} value={l} className="bg-[#0d0d14]">{l}</option>
+                    <option key={l} value={l} className="bg-[#0d0d14]">
+                      {l}
+                    </option>
                   ))}
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
@@ -223,7 +219,9 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             </div>
           </div>
           <div>
-            <label className={label}>Price <span className="text-violet-400/80">*</span></label>
+            <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">
+              Price <span className="text-violet-400/80">*</span>
+            </label>
             <input
               className={inputCls("price")}
               placeholder="e.g. $89.00"
@@ -238,13 +236,16 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             )}
           </div>
           <div>
-            <label className={label}>Thumbnail URL</label>
+            <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">Thumbnail URL</label>
             <div className="flex gap-2">
               <input
                 className={`${inputCls("thumbnail")} flex-1`}
                 placeholder="https://..."
-                value={form.thumbnail}
-                onChange={(e) => { set("thumbnail", e.target.value); setImgError(false); }}
+                value={form.thumbnail||''}
+                onChange={(e) => {
+                  set("thumbnail", e.target.value);
+                  setImgError(false);
+                }}
               />
               <button
                 type="button"
@@ -256,15 +257,6 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             </div>
           </div>
 
-          <div>
-            <label className={label}>Course URL <span className="text-white/20 normal-case tracking-normal font-normal">optional</span></label>
-            <input
-              className={inputCls("href")}
-              placeholder="/courses/my-course"
-              value={form.href}
-              onChange={(e) => set("href", e.target.value)}
-            />
-          </div>
         </div>
         <div className="relative shrink-0 flex items-center justify-end gap-2.5 border-t border-white/6 px-6 py-4">
           <button
@@ -278,7 +270,6 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             onClick={handleSave}
             className="group relative overflow-hidden rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           >
-
             <div className="absolute inset-0 bg-linear-to-r from-violet-600 to-purple-600 transition-opacity duration-200 group-hover:opacity-90" />
             <div className="absolute inset-0 translate-x-full bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
             <div className="absolute inset-0 rounded-xl shadow-lg shadow-violet-500/25" />

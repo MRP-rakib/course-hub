@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Clock3, Star, Users2 } from "lucide-react";
-import type { CourseRecord } from "@/data/courses";
 import Container from "../utils/Container";
+import { Course } from "@/types/course";
 
 type CourseViewProps = {
-  course: CourseRecord;
+  course: Course;
 };
 
 export default function CourseView({ course }: CourseViewProps) {
@@ -24,7 +24,7 @@ export default function CourseView({ course }: CourseViewProps) {
           <div>
             <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/8 bg-white/4">
               <Image
-                src={course.thumbnail}
+                src={course.thumbnail||''}
                 alt={course.title}
                 fill
                 priority
@@ -40,7 +40,7 @@ export default function CourseView({ course }: CourseViewProps) {
 
             <div className="mt-6 flex flex-wrap items-center gap-2">
               <span className="inline-flex rounded-full border border-violet-500/25 bg-violet-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-violet-300">
-                {course.category}
+                {course.category?.name}
               </span>
               <span className="rounded-lg border border-white/8 bg-white/3 px-2.5 py-1 text-xs text-white/60">
                 {course.level}
@@ -57,7 +57,7 @@ export default function CourseView({ course }: CourseViewProps) {
 
             <p className="mt-3 text-sm text-white/55">
               Instructor:{" "}
-              <span className="font-medium text-white/80">{course.instructor}</span>
+              <span className="font-medium text-white/80">{course.instructor?.fullname}</span>
             </p>
 
             <div className="mt-8 border-t border-white/8 pt-8">
@@ -65,7 +65,7 @@ export default function CourseView({ course }: CourseViewProps) {
               <p className="mt-3 text-[15px] leading-relaxed text-white/65">{course.description}</p>
             </div>
 
-            <div className="mt-10">
+            {/* <div className="mt-10">
               <h2 className="text-lg font-bold text-white">What you&apos;ll learn</h2>
               <ul className="mt-4 space-y-3">
                 {course.highlights.map((item) => (
@@ -78,7 +78,7 @@ export default function CourseView({ course }: CourseViewProps) {
                   </li>
                 ))}
               </ul>
-            </div>
+            </div> */}
           </div>
 
           <aside className="rounded-2xl border border-white/1 bg-white/3 p-6 lg:sticky lg:top-24">
