@@ -13,9 +13,8 @@ export const createProfile = async (
     .insert([
       {
         id:user.id,
-        email: user.email,
-        fullname,
         username,
+        fullname,
         role,
       }
     ])

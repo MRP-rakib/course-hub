@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
   const { profile } = useAppSelector(state => state.auth);
+  const { user } = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch()
 
   const ref = useRef<HTMLDivElement>(null);
@@ -28,21 +29,22 @@ export default function ProfileDropdown() {
 const Signout = async () => {
   try {
     const { error } = await supabase.auth.signOut();
-    
+
     if (error) {
-      console.error('Logout error:', error.message);
-      
+      console.error("Logout error:", error.message);
       return;
     }
 
+    // clear redux state
     dispatch(setUser(null));
     dispatch(setProfile(null));
-    
+
+    // important: clear local storage too
+    localStorage.removeItem("supabase-auth-token"); // optional but recommended
+
   } catch (err) {
-    console.error('Unexpected logout error:', err);
-    
+    console.error("Unexpected logout error:", err);
   }
-  
 };
 
 
@@ -74,7 +76,7 @@ const Signout = async () => {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-white truncate">{profile?.fullname}</p>
-                <p className="text-xs text-white/40 truncate">{profile?.email}</p>
+                <p className="text-xs text-white/40 truncate">{user?.email}</p>
               </div>
             </div>
           </div>

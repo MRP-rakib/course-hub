@@ -1,12 +1,7 @@
 'use client'
 
 import { supabase } from '@/lib/supabaseClient'
-import {
-  setLoading,
-  setProfile,
-  setUser,
-} from '@/redux/auth/authSlice'
-
+import { setLoading, setProfile, setUser } from '@/redux/auth/authSlice'
 import { useAppDispatch } from '@/redux/hooks/hooks'
 import React, { useEffect } from 'react'
 import type { User } from '@supabase/supabase-js'
@@ -17,42 +12,56 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true
 
-    const syncUser = async (user: User | null) => {
+    const syncUser = async () => {
       dispatch(setLoading(true))
 
       try {
-        if (!user) {
+        const { data, error } = await supabase.auth.getUser()
+
+        const user: User | null = data.user
+
+        if (error || !user) {
+          if (!isMounted) return
           dispatch(setUser(null))
           dispatch(setProfile(null))
           return
         }
 
+        if (!isMounted) return
         dispatch(setUser(user))
 
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
-          .single()
+          .maybeSingle()
 
-        if (isMounted) {
-          dispatch(setProfile(profile))
+        if (!isMounted) return
+
+        if (profileError) {
+          dispatch(setProfile(null))
+        } else {
+          dispatch(setProfile(profile ?? null))
         }
-      } catch (error) {
-        console.error(error)
+      } catch (error: unknown) {
+        console.error('Auth sync error:', error)
+
+        if (!isMounted) return
+        dispatch(setUser(null))
+        dispatch(setProfile(null))
       } finally {
-        dispatch(setLoading(false))
+        if (isMounted) dispatch(setLoading(false))
       }
     }
 
-    supabase.auth.getSession().then(({ data }) => {
-      syncUser(data.session?.user ?? null)
-    })
+    // initial load
+    syncUser()
 
+    // auth state listener (no session usage)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      syncUser(session?.user ?? null)
+    } = supabase.auth.onAuthStateChange(() => {
+      syncUser()
     })
 
     return () => {
@@ -61,6 +70,19 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [dispatch])
 
+
+  useEffect(() => {
+  const debug = async () => {
+    const user = await supabase.auth.getUser()
+    const session = await supabase.auth.getSession()
+
+    console.log('USER:', user)
+    console.log('SESSION:', session)
+    console.log('TOKEN:', localStorage.getItem('supabase-auth-token'))
+  }
+
+  debug()
+}, [])
   return <>{children}</>
 }
 

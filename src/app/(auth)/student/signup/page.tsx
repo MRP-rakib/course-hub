@@ -7,6 +7,7 @@ import InputField from "@/components/ui/InputField";
 import { usePathname, useRouter } from "next/navigation";
 import { signup } from "@/services/auth/signup";
 import { createProfile } from "@/services/auth/profileServices";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
@@ -56,9 +57,17 @@ export default function SignupPage() {
       setError("Passwords do not match");
       return;
     }
+   const { data: existing } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("username", form.username)
+      .maybeSingle();
 
+    if (existing) {
+      setError("Username already taken");
+      return;
+    }
     const role = pathname.includes("student") ? "student" : "instructor";
-
     const { data, error } = await signup(form.email, form.password);
 
     if (error) {

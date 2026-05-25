@@ -1,7 +1,7 @@
 'use client'
 import CourseCard from "./CourseCard";
 import Container from "../utils/Container";
-import { useCourse } from "@/services/courses/courses";
+import { useCourse } from "@/redux/hooks/courses/courses";
 
 export default function FeatureCourse() {
    const {courses} = useCourse()

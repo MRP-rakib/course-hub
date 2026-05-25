@@ -2,18 +2,19 @@ import React from 'react'
 import { InfoRow } from './InfoRow'
 import { InfoSection } from './InfoSection'
 import { BookOpen, Calendar, Mail, MapPin, Phone, Shield, User } from 'lucide-react'
-import { Profile } from '@/types/authType'
+import { AuthUser, Profile } from '@/types/authType'
 interface overviewType{
     profile:Profile|null
+    user:AuthUser|null
 }
-function Overview({profile}:overviewType) {
+function Overview({profile,user}:overviewType) {
   return (
    <div className="space-y-8">
               <div className="grid md:grid-cols-2 gap-8">
                 <InfoSection title="Personal Information" icon={<User className="h-5 w-5" />}>
                   <InfoRow classname={'capitalize'} icon={<User className="h-4 w-4" />} label="Full Name" value={profile?.fullname||''} />
-                  <InfoRow icon={<Mail className="h-4 w-4" />} label="Email Address" value={profile?.email||''} />
-                  <InfoRow icon={<Phone className="h-4 w-4" />} label="Phone Number" value={profile?.phone||''} />
+                  <InfoRow icon={<Mail className="h-4 w-4" />} label="Email Address" value={user?.email||''} />
+                  <InfoRow icon={<Phone className="h-4 w-4" />} label="Phone Number" value={user?.phone||''} />
                   <InfoRow classname={'capitalize'} icon={<User className="h-4 w-4" />} label="Gender" value={profile?.gender||''} />
                 </InfoSection>
 

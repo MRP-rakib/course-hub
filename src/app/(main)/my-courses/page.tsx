@@ -14,7 +14,7 @@ import {
   Award,
   ChevronDown,
 } from "lucide-react";
-import { useCourse } from "@/services/courses/courses";
+import { useCourse } from "@/redux/hooks/courses/courses";
 import ViewList from "@/components/courses/ViewList";
 
 type ViewMode = "grid" | "list";

@@ -14,7 +14,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key:'root',
   storage,
-  witelist:['category']
+  whitelist:['category']
 }
 const persisedRducer = persistReducer(persistConfig,rootReducer)
 export const store = configureStore({

@@ -1,35 +1,28 @@
-import {
-  Calendar,
-  Mail,
-  MapPin,
-  Phone,
-  User,
-} from "lucide-react";
+import { Calendar, Mail, MapPin, User } from "lucide-react";
 import InputField from "../ui/InputField";
-import { Profile } from "@/types/authType";
+import { AuthUser, Profile } from "@/types/authType";
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import SelectField from "../ui/SelectField";
+import { supabase } from "@/lib/supabaseClient";
 
 interface EditingTabType {
   profile: Profile | null;
+  user: AuthUser | null;
 }
 
-function EditTab({ profile }: EditingTabType) {
+function EditTab({ profile, user }: EditingTabType) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const [form, setForm] = useState({
     fullname: profile?.fullname || "",
-    email: profile?.email || "",
-    phone: profile?.phone || "",
+    email: user?.email || "",
     gender: profile?.gender || "",
     dateOfBirth: profile?.date_of_birth
       ? new Date(profile.date_of_birth).toISOString().split("T")[0]
       : "",
     location: profile?.location || "",
   });
-
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -41,61 +34,59 @@ function EditTab({ profile }: EditingTabType) {
     }));
   };
 
-  const handleUpdate = async () => {
-    if (!profile?.id) {
-      setMessage({ type: "error", text: "Profile ID not found" });
-      return;
-    }
+  // ✅ FIXED cleanObj (handles "", null, undefined)
+  const cleanObj = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
+    return Object.fromEntries(
+      Object.entries(obj).filter(
+        ([, v]) => v !== null && v !== undefined && v !== "",
+      ),
+    ) as Partial<T>;
+  };
 
+  const handleUpdate = async () => {
     setLoading(true);
     setMessage({ type: "", text: "" });
 
-    try {
-      const cleanValue = (value: string) => {
-        if (value === "" || value === null || value === undefined) {
-          return undefined;
-        }
-        return value.trim()
-      };
-      const rawPayload = {
-        fullname: cleanValue(form.fullname),
-        email: cleanValue(form.email),
-        phone: cleanValue(form.phone),
-        gender: cleanValue(form.gender),
-        date_of_birth: cleanValue(form.dateOfBirth),
-        location: cleanValue(form.location),
-      };
-      const payload = Object.fromEntries(
-        Object.entries(rawPayload).filter(([, v]) => v !== undefined),
-      ) as Partial<typeof rawPayload>;
+    if (!profile?.id) {
+      setMessage({ type: "error", text: "Profile not found" });
+      return;
+    }
 
-      if (Object.keys(payload).length === 0) {
-        setMessage({ type: "error", text: "No changes to update" });
-        setLoading(false);
-        return;
-      }
+    const clean = cleanObj(form);
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .update(payload)
-        .eq("id", profile.id)
-        .select()
-        .single()
+    const { email, ...profileData } = clean;
 
-      if (error) {
-        console.error("Update error:", error);
-        setMessage({ type: "error", text: error.message });
-      } else {
-        console.log("Update response:", data);
-        setMessage({ type: "success", text: "Profile updated successfully!" });
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "Something went wrong";
-      setMessage({ type: "error", text: errorMessage });
-    } finally {
+    const { data: profilesData, error: profilesError } = await supabase
+      .from("profiles")
+      .update(profileData)
+      .eq("id", profile.id);
+    if (profilesError) {
+      setMessage({ type: "error", text: profilesError.message });
       setLoading(false);
+      return;
+    }
+    if (profilesData) {
+      setMessage({ type: "success", text: "profile update succesfull" });
+      setLoading(false);
+      return;
+    }
+
+    console.log("sending email:", email);
+    const { data: emailData, error: emailError } =
+      await supabase.auth.updateUser({
+        email: email?.trim(),
+      });
+    console.log(emailData);
+    console.log(emailError);
+    if (emailError) {
+      setMessage({ type: "error", text: emailError.message });
+      setLoading(false);
+      return;
+    }
+    if (emailData) {
+      setMessage({ type: "success", text: "profile update succesfull" });
+      setLoading(false);
+      return;
     }
   };
 
@@ -135,14 +126,6 @@ function EditTab({ profile }: EditingTabType) {
           onChange={handleChange}
         />
 
-        <InputField
-          name="phone"
-          label="Phone Number"
-          icon={<Phone className="h-4 w-4" />}
-          value={form.phone}
-          onChange={handleChange}
-        />
-
         <SelectField
           name="gender"
           label="Gender"
@@ -174,6 +157,7 @@ function EditTab({ profile }: EditingTabType) {
           onChange={handleChange}
         />
       </div>
+
       <div className="flex gap-3 mt-6">
         <button
           onClick={handleUpdate}

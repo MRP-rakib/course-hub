@@ -7,6 +7,7 @@ import InputField from "@/components/ui/InputField";
 import { usePathname, useRouter } from "next/navigation";
 import { signup } from "@/services/auth/signup";
 import { createProfile } from "@/services/auth/profileServices";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
@@ -33,56 +34,63 @@ export default function SignupPage() {
 
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-  e.preventDefault();
-
-  if (loading) return; // 🔥 prevent double submit
-  setLoading(true);
-  setError("");
-  setSuccess("");
-
-  try {
-    if (
-      !form.username ||
-      !form.fullname ||
-      !form.email ||
-      !form.password ||
-      !form.cpassword
-    ) {
-      setError("all field required");
-      return;
-    }
-
-    if (form.password !== form.cpassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    
-    const role = pathname.includes("student") ? "student" : "instructor";
-
-    const { data, error } = await signup(form.email, form.password);
-
-    if (error) {
-      setError(error.message);
-      return;
-    }
-
-    if (data.user) {
-      await createProfile(
-        data.user,
-        form.fullname,
-        form.username,
-        role
-      );
-
-      setSuccess("account created successfully");
-
-      route.replace("/signin");
-    }
-  } finally {
-    setLoading(false); // 🔥 ALWAYS runs
-  }
-};
-
+   e.preventDefault();
+ 
+   if (loading) return; // 🔥 prevent double submit
+   setLoading(true);
+   setError("");
+   setSuccess("");
+ 
+   try {
+     if (
+       !form.username ||
+       !form.fullname ||
+       !form.email ||
+       !form.password ||
+       !form.cpassword
+     ) {
+       setError("all field required");
+       return;
+     }
+ 
+     if (form.password !== form.cpassword) {
+       setError("Passwords do not match");
+       return;
+     }
+    const { data: existing } = await supabase
+       .from("profiles")
+       .select("username")
+       .eq("username", form.username)
+       .maybeSingle();
+ 
+     if (existing) {
+       setError("Username already taken");
+       return;
+     }
+     const role = pathname.includes("student") ? "student" : "instructor";
+     const { data, error } = await signup(form.email, form.password);
+ 
+     if (error) {
+       setError(error.message);
+       return;
+     }
+ 
+     if (data.user) {
+       await createProfile(
+         data.user,
+         form.fullname,
+         form.username,
+         role
+       );
+ 
+       setSuccess("account created successfully");
+ 
+       route.replace("/signin");
+     }
+   } finally {
+     setLoading(false); // 🔥 ALWAYS runs
+   }
+ };
   return (
     <div className="relative min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-12 overflow-hidden">
       <div className="fixed -top-25 -left-25 w-125 h-125 rounded-full bg-violet-600 opacity-[0.18] blur-[80px] pointer-events-none" />

@@ -1,54 +1,65 @@
 "use client";
 
 import Image from "next/image";
-import { X, ChevronDown, Sparkles, Upload } from "lucide-react";
-import { useState } from "react";
+import { X, ChevronDown, Sparkles,} from "lucide-react";
+import { useRef, useState } from "react";
 import { useAppSelector } from "@/redux/hooks/hooks";
 import { Course } from "@/types/course";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { CreateCourse } from "@/types/createCourse";
+import { uploadMediaToSupabase } from "@/services/uploader/uploader";
 
 type ModalProps = {
   onClose: () => void;
-  onSave: (data: Omit<Course, "id">) => void;
+  onSave: (data: CreateCourse) => void;
   initial?: Course | null;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const LEVELS = ["Beginner", "Intermediate", "Advanced"];
 
-const EMPTY_FORM = {
-  title: "",
-  description:'',
-  category: "",
-  level: "Beginner",
-  price: "",
-  thumbnail: "",
-};
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 function AddCourse({ onClose, onSave, initial }: ModalProps) {
+  const fileRef = useRef<HTMLInputElement | null>(null);
   const { categories } = useAppSelector((state) => state.category);
-  const [form, setForm] = useState(
-    initial
-      ? {
-          title: initial.title,
-          description:initial.description,
-          category: initial.category,
-          level: initial.level,
-          price: initial.price,
-          thumbnail: initial.thumbnail,
-        }
-      : EMPTY_FORM,
-  );
+  const [form, setForm] = useState({
+    title: initial?.title || "",
+    description: initial?.description || "",
+    category: initial?.category?.id || categories[0]?.id || "",
+    level: initial?.level || "Beginner",
+    price: initial?.price || 0,
+    thumbnail: initial?.thumbnail || "",
+  });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // instant preview
+    const preview = URL.createObjectURL(file);
+
+    setForm((prev) => ({
+      ...prev,
+      thumbnail: preview,
+    }));
+
+    // upload to supabase
+    const result = await uploadMediaToSupabase(file);
+
+    if (!result) return;
+
+    setForm((prev) => ({
+      ...prev,
+      thumbnail: result.url, // ✅ ONLY URL
+    }));
+  };
 
   const [errors, setErrors] = useState<
-    Partial<Record<keyof typeof EMPTY_FORM, string>>
+    Partial<Record<keyof typeof form, string>>
   >({});
   const [imgError, setImgError] = useState(false);
 
-  const set = (k: keyof typeof EMPTY_FORM, v: string) => {
+  const set = (k: keyof typeof form, v: string) => {
     setForm((p) => ({ ...p, [k]: v }));
     if (errors[k]) setErrors((p) => ({ ...p, [k]: undefined }));
   };
@@ -56,25 +67,24 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
   const validate = () => {
     const e: typeof errors = {};
     if (!form.title.trim()) e.title = "Course title is required";
-    if (!form.description?.trim()) e.title = "description is required";
+    if (!form.description?.trim()) e.description = "description is required";
     if (!form.price) e.price = "Price is required";
+    if (!form.thumbnail) e.thumbnail = "thumbnail is required";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
   const handleSave = () => {
     if (!validate()) return;
-   console.log(onSave);
-   
+    onSave(form);
   };
 
   // ── Shared styles ──────────────────────────────────────────────────────────
 
-  
   const inputBase =
     "w-full rounded-xl bg-white/[0.04] border text-sm text-white placeholder-white/25 outline-none transition-all duration-200 px-4 py-3 focus:bg-violet-500/5 focus:ring-1 focus:ring-violet-500/30";
 
-  const inputCls = (field: keyof typeof EMPTY_FORM) =>
+  const inputCls = (field: keyof typeof form) =>
     `${inputBase} ${
       errors[field]
         ? "border-rose-500/50 focus:border-rose-500/70"
@@ -126,22 +136,48 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
         </div>
         <div className="mx-6 h-px bg-white/6" />
         <div className="relative flex-1 overflow-y-auto space-y-5 px-6 py-5">
-          {/* Thumbnail preview strip (shown when URL entered) */}
-          {form.thumbnail && !imgError && (
-            <div className="relative h-28 w-full overflow-hidden rounded-xl border border-white/8">
-              <Image
-                src={form.thumbnail}
-                alt="thumbnail preview"
-                fill
-                className="object-cover"
-                onError={() => setImgError(true)}
+          <div>
+            <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">
+              Thumbnail URL
+            </label>
+
+            <div className="flex gap-2">
+              <div
+                onClick={() => fileRef.current?.click()}
+                className="relative h-28 w-full cursor-pointer overflow-hidden rounded-xl border border-white/8"
+              >
+                <Image
+                  src={form.thumbnail || "/placeholder.png"}
+                  alt="thumbnail preview"
+                  fill
+                  sizes="100%"
+                  className="object-cover"
+                  onError={() => setImgError(true)}
+                />
+
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+
+                <span className="absolute bottom-2 left-3 text-[10px] font-semibold uppercase tracking-widest text-white/60">
+                  Click to upload
+                </span>
+              </div>
+
+              {/* hidden input */}
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleImageUpload}
               />
-              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
-              <span className="absolute bottom-2 left-3 text-[10px] font-semibold uppercase tracking-widest text-white/60">
-                Preview
-              </span>
             </div>
-          )}
+               {!imgError&& errors.thumbnail && (
+              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-rose-400">
+                <span className="inline-block h-1 w-1 rounded-full bg-rose-400" />
+                {errors.thumbnail}
+              </p>
+            )}
+          </div>
           <div>
             <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">
               Course Title <span className="text-violet-400/80">*</span>
@@ -166,7 +202,7 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             <textarea
               className={inputCls("title")}
               placeholder="e.g. Advanced React Patterns"
-              value={form.description||''}
+              value={form.description || ""}
               onChange={(e) => set("description", e.target.value)}
             />
             {errors.description && (
@@ -176,22 +212,20 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
               </p>
             )}
           </div>
-         
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">Category</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">
+                Category
+              </label>
               <div className="relative">
                 <select
                   className={`${inputBase} border-white/8 focus:border-violet-500/50 appearance-none pr-9 cursor-pointer`}
-                  value={
-                    typeof form.category === "string"
-                      ? form.category
-                      : form.category?.name || ""
-                  }
+                  value={ form.category }
                   onChange={(e) => set("category", e.target.value)}
                 >
                   {categories.map((c) => (
-                    <option key={c.id} value={c.name} className="bg-[#0d0d14]">
+                    <option key={c.id} value={c.id} className="bg-[#0d0d14]">
                       {c.name}
                     </option>
                   ))}
@@ -201,7 +235,9 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">Level</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">
+                Level
+              </label>
               <div className="relative">
                 <select
                   className={`${inputBase} border-white/8 focus:border-violet-500/50 appearance-none pr-9 cursor-pointer`}
@@ -236,27 +272,27 @@ function AddCourse({ onClose, onSave, initial }: ModalProps) {
             )}
           </div>
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">Thumbnail URL</label>
+            {/* <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/35 mb-2">Thumbnail URL</label>
             <div className="flex gap-2">
               <input
                 className={`${inputCls("thumbnail")} flex-1`}
                 placeholder="https://..."
                 value={form.thumbnail||''}
+                readOnly
                 onChange={(e) => {
                   set("thumbnail", e.target.value);
                   setImgError(false);
                 }}
               />
               <button
-                type="button"
                 className="shrink-0 flex items-center gap-1.5 rounded-xl border border-white/8 bg-white/4 px-3 text-xs text-white/40 transition-all hover:border-white/15 hover:bg-white/8 hover:text-white/80"
               >
+                <input type="file" />
                 <Upload className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Upload</span>
               </button>
-            </div>
+            </div> */}
           </div>
-
         </div>
         <div className="relative shrink-0 flex items-center justify-end gap-2.5 border-t border-white/6 px-6 py-4">
           <button

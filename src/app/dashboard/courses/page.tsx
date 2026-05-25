@@ -18,15 +18,19 @@ import Badge from "@/components/dashboard/courses/Badge";
 import LevelPill from "@/components/dashboard/courses/LavelPill";
 import CourseFilters from "@/components/ui/Search&Filter";
 import { Course } from "@/types/course";
-import { useCourse } from "@/services/courses/courses";
 import { useAppSelector } from "@/redux/hooks/hooks";
 import Link from "next/link";
+import { useInstructorCourse } from "@/redux/hooks/courses/InstructorCourse";
+import { CreateCourse } from "@/types/createCourse";
+import { supabase } from "@/lib/supabaseClient";
 
 type FilterState = {
   category: string;
   level: string;
   sort: string;
 };
+
+
 
 
 const LEVELS = ["All", "Beginner", "Intermediate", "Advanced"];
@@ -45,16 +49,15 @@ export default function ListCourses() {
   const [editTarget, setEditTarget] = useState<Course | null>(null);
   const [search, setSearch] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const {courses} = useCourse()
+  const {courses} = useInstructorCourse()
   const {categories} = useAppSelector(state=>state.category)
+  const {profile} = useAppSelector(state=>state.auth)
   const [filters, setFilters] = useState<FilterState>({
     category: "All",
     level: "All",
     sort: "Newest",
   });
 
-
-  
 
   // ─── Filtered Data ─────────────────────────────────────────;
 
@@ -117,8 +120,42 @@ const closeModal = () => {
     setEditTarget(course);
     setShowModal(true);
   };
+ 
 
+  const onSave=async(form:CreateCourse)=>{
+       if (editTarget) {
+    await supabase
+      .from("courses")
+      .update({
+        title: form.title,
+        description: form.description,
+        instructor_id:profile?.id,
+        category_id: form.category,
+        level: form.level,
+        price: form.price,
+        thumbnail: form.thumbnail,
+      })
+      .eq("id", editTarget.id);
+  } else {
+    await supabase.from("courses").insert([
+      {
+        title: form.title,
+        description: form.description,
+        category_id: form.category,
+        instructor_id:profile?.id,
+        level: form.level,
+        price: form.price,
+        thumbnail: form.thumbnail,
+      },
+    ]);
+  }
 
+  closeModal()
+  }
+// const handleAddCourse=async()=>{
+//   console.log();
+  
+// }
 
   const activeFilterCount = [
     filters.category !== "All",
@@ -448,7 +485,7 @@ const closeModal = () => {
       {showModal && (
         <AddCourse
           onClose={closeModal}
-          onSave={()=>console.log('i am save')}
+          onSave={onSave}
           initial={editTarget}
         />
       )}

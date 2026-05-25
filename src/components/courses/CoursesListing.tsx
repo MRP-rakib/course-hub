@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useCategories } from "@/redux/hooks/useCategories";
 // import { Course } from "@/types/course";
-import { useCourse } from "@/services/courses/courses";
+import { useCourse } from "@/redux/hooks/courses/courses";
 const pageSize = 6;
 export default function CoursesListing() {
   const [page, setPage] = useState(1);

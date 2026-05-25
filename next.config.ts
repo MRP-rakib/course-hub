@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
         hostname: "www.jotform.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "hbjhsemtqhrrrihgvqpn.supabase.co",
+      },
     ],
   },
 };

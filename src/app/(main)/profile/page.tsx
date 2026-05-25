@@ -15,6 +15,7 @@ type TabType = "overview" | "edit" | "security";
 export default function Profile() {
   const [tab, setTab] = useState<TabType>("overview");
   const {profile} = useAppSelector(state=>state.auth)
+  const {user} = useAppSelector(state=>state.auth)
 
   return (
     <div className="bg-[#0a0a0f] text-white min-h-screen">
@@ -54,8 +55,12 @@ export default function Profile() {
                   </span>
                 </div>
                 <p className="text-white/60 text-base mb-3 flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  @{profile?.username}
+                </p>
+                <p className="text-white/60 text-base mb-3 flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  {profile?.email}
+                  {user?.email}
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm text-white/50">
                   <span className="flex items-center gap-1.5">
@@ -114,11 +119,11 @@ export default function Profile() {
         <div className="mt-6 rounded-3xl border border-white/10 bg-linear-to-br from-white/[0.07] to-white/2 backdrop-blur-2xl p-8 shadow-2xl shadow-violet-900/10">
 
           {tab === "overview" && (
-            <Overview profile={profile}/>
+            <Overview profile={profile} user={user}/>
           )}
 
           {tab === "edit" && (
-            <EditTab  profile={profile}/>
+            <EditTab  profile={profile} user={user}/>
           )}
 
           {tab === "security" && (
